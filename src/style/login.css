@@ -1,0 +1,27 @@
+body {
+    background-color: #f0f0f0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .App {
+    text-align: center;
+    color: #333;
+  }
+  
+  form {
+    margin-top: 20px;
+  }
+  
+  .centered-paper {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flexDirection: column;
+    alignItems: center;
+    justifyContent: center;
+    padding: 30px;
+  }
