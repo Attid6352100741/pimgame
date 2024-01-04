@@ -24,7 +24,7 @@ function Course() {
     const [courseScores, setCourseScores] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedListItem, setSelectedListItem] = useState(null);
-    
+
     const handleLogout = () => {
         logout();
         navigate('/login');
@@ -32,7 +32,7 @@ function Course() {
 
     useEffect(() => {
         const fetchedScores = [];
-    
+
         const courseData = [
             { id: 1, name: 'English Verb 1' },
             { id: 2, name: 'English Verb 2' },
@@ -40,30 +40,30 @@ function Course() {
             { id: 4, name: 'English Verb 4' },
         ];
         const storedUser = JSON.parse(localStorage.getItem('user'));
-    
+
         if (storedUser) {
             const { id: userId } = storedUser;
-    
+
             courseData.forEach((course) => {
                 const storedScore = localStorage.getItem(`game${course.id}Score_${userId}`);
                 const score = storedScore ? parseInt(storedScore, 10) : 0;
                 fetchedScores.push({ id: course.id, score, name: course.name });
             });
-    
+
             setCourseScores(fetchedScores);
-    
+
             if (!selectedCourse) {
                 const defaultCourse = courseData.find((course) => course.name === 'English Verb 1');
                 setSelectedCourse(defaultCourse);
             }
-    
+
             const storedTestHistory = localStorage.getItem(`testHistory_${userId}`);
             if (storedTestHistory) {
                 setTestHistory(JSON.parse(storedTestHistory));
             }
         }
     }, [user, navigate, selectedCourse, setTestHistory]);
-    
+
 
 
     const CourseListItem = ({ course }) => {
@@ -120,7 +120,94 @@ function Course() {
     return (
         <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
-           
+            <div>
+                <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
+                    <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }}>
+                        {/* First Box */}
+                        <div>
+                            <Box
+                                sx={{
+                                    marginTop: 5,
+                                    padding: "20px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    bgcolor: 'background.paper',
+                                    borderRadius: "15px",
+                                }}
+                            >
+                                <h4 style={{}}>Course</h4>
+                                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', borderRadius: "15px", }}>
+                                    {courseScores.map((course) => (
+                                        <CourseListItem key={course.id} course={course} />
+                                    ))}
+                                </List>
+                            </Box>
+                        </div>
+
+                        {/* Second Box */}
+                        <div style={{ marginLeft: '1%', minWidth: '18vh'}}>
+                            <Box
+                                sx={{
+                                    marginTop: 5,
+                                    padding: "20px",
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    bgcolor: 'background.paper',
+                                    borderRadius: "15px",
+                                }}
+                            >
+                                {selectedCourse && (
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: '100%' }}>
+                                            <div>
+                                                <Avatar style={{ backgroundColor: 'transparent', width: '4rem', height: '4rem' }}>
+                                                    <LibraryBooksIcon style={{ color: '#4b76db', width: '3rem', height: '3rem' }} />
+                                                </Avatar>
+                                            </div>
+                                            <div style={{ marginTop: '1rem', textAlign: 'center', flex: 1 }}>
+                                                <h3>{selectedCourse.name}</h3>
+                                                {courseScores.map((course) => {
+                                                    if (course.id === selectedCourse.id) {
+                                                        return (
+                                                            <p key={course.id}>
+                                                                Score: {course.score}/20 {course.score >= 10 ? '✔️' : '❌'}
+                                                            </p>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })}
+                                            </div>
+                                            <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Button
+                                                    variant="contained"
+                                                    endIcon={<HistoryIcon />}
+                                                    style={{ backgroundColor: '#4b76db', marginRight: '10px' }}
+                                                    onClick={() => setOpenDialog(true)}
+                                                >
+                                                    History
+                                                </Button>
+                                                <Link to={`/course/games/${selectedCourse.id}`} style={{ textDecoration: 'none' }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        endIcon={<SendIcon />}
+                                                        style={{ backgroundColor: '#4b76db' }}
+                                                    >
+                                                        Test
+                                                    </Button>
+                                                </Link>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                        </div>
+                                    </div>
+                                )}
+                            </Box>
+                        </div>
+                    </div>
+                </Container>
+            </div>
 
             <Dialog
                 open={openDialog}
