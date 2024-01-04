@@ -13,11 +13,13 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import SendIcon from '@mui/icons-material/Send';
 import HistoryIcon from '@mui/icons-material/History';
+import { useTheme } from '@mui/system';
 import '../style/course.css';
 
 function Course() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
+    const theme = useTheme();
     const [openDialog, setOpenDialog] = useState(false);
     const handleClose = () => setOpenDialog(false);
     const [testHistory, setTestHistory] = useState([]);
@@ -122,18 +124,18 @@ function Course() {
             <AppBarToolbar user={user} onLogout={handleLogout} />
             <div>
                 <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
-                    <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ marginTop: theme.spacing(3), display: 'flex', justifyContent: 'space-between' }}>
                         {/* First Box */}
                         <div>
                             <Box
                                 sx={{
-                                    marginTop: 5,
-                                    padding: "20px",
+                                    marginTop: theme.spacing(3),
+                                    padding: theme.spacing(3),
                                     display: 'flex',
                                     flexDirection: 'column',
                                     alignItems: 'center',
                                     bgcolor: 'background.paper',
-                                    borderRadius: "15px",
+                                    borderRadius: theme.spacing(2),
                                 }}
                             >
                                 <h4 style={{}}>Course</h4>
@@ -146,15 +148,15 @@ function Course() {
                         </div>
 
                         {/* Second Box */}
-                        <div style={{ marginLeft: '1%', minWidth: '18vh'}}>
+                        <div style={{ marginLeft: theme.spacing(3), minWidth: '20vw' }}>
                             <Box
                                 sx={{
-                                    marginTop: 5,
-                                    padding: "20px",
+                                    marginTop: theme.spacing(3),
+                                    padding: theme.spacing(5),
                                     flexDirection: 'column',
                                     alignItems: 'center',
                                     bgcolor: 'background.paper',
-                                    borderRadius: "15px",
+                                    borderRadius: theme.spacing(2),
                                 }}
                             >
                                 {selectedCourse && (
