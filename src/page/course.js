@@ -120,7 +120,7 @@ function Course() {
 
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' ,minWidth:'100vw'}}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
             <div>
                 <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
