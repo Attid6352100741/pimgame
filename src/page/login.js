@@ -1,4 +1,4 @@
-import { Button, Toolbar, IconButton, Typography, Avatar, Tooltip, Box } from "@mui/material";
+import { Button, Toolbar, Typography, Avatar, Box } from "@mui/material";
 import React, { useState } from 'react';
 import { useUser } from '../components/UserContext';
 import TextField from '@mui/material/TextField';
@@ -6,11 +6,6 @@ import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import loginBackground from '../img/login.jpg';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
-import CallIcon from '@mui/icons-material/Call';
-import { Link } from 'react-router-dom';
 import '../style/login.css';
 
 function Login() {
@@ -61,7 +56,14 @@ function Login() {
   };
 
   return (
-    <div className='main-content' style={{ height: '100vh', backgroundImage: `url(${loginBackground})`, backgroundSize: 'cover', margin: '0px', padding: '0px' }}>
+    <div className='main-content' style={{
+      height: '100vh',
+      backgroundImage: `url(${loginBackground})`,
+      backgroundSize: 'cover',
+      margin: '0px',
+      padding: '0px',
+      overflowY: 'auto',  // เพิ่ม overflowY เพื่อให้เว็บไซต์สามารถเลื่อนได้
+    }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', bgcolor: '#8ac3e3' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {/* เนื้อหาใน Toolbar ด้านบน */}
@@ -86,7 +88,7 @@ function Login() {
           </Typography>
           <Box sx={{ mt: 1 }}>
             <TextField
-              style={{minWidth:'250px'}}
+              style={{ minWidth: '250px' }}
               margin="normal"
               required
               fullWidth
@@ -133,64 +135,6 @@ function Login() {
           </Box>
         </Box>
       </Container>
-
-
-      {/* <Toolbar sx={{ bgcolor: '#8ac3e3', position: 'absolute', bottom: '0', left: '0', width: "100%" }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ position: 'absolute', bottom: '0', right: '0', marginRight: '3%' }}>
-            <Tooltip title="Facebook">
-              <IconButton
-                component={Link}
-                to="https://www.facebook.com/"
-                sx={{
-                  '&:hover': {
-                    color: 'white',
-                  },
-                }}
-              >
-                <FacebookIcon sx={{ width: '3rem', height: '3rem' }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Forward to Inbox" style={{marginLeft:'1vw'}}>
-              <IconButton
-                component={Link}
-                to="https://mail.google.com/"
-                sx={{
-                  '&:hover': {
-                    color: 'white',
-                  },
-                }}
-              >
-                <ForwardToInboxIcon sx={{ width: '3rem', height: '3rem' }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Instagram" style={{marginLeft:'1vw'}}>
-              <IconButton
-                component={Link}
-                to="https://www.instagram.com/"
-                sx={{
-                  '&:hover': {
-                    color: 'white',
-                  },
-                }}
-              >
-                <InstagramIcon sx={{ width: '3rem', height: '3rem' }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Call : 0123-456-789" style={{marginLeft:'1vw'}}>
-              <IconButton
-                sx={{
-                  '&:hover': {
-                    color: 'white',
-                  },
-                }}
-              >
-                <CallIcon sx={{ width: '3rem', height: '3rem' }} />
-              </IconButton>
-            </Tooltip>
-          </div>
-        </div>
-      </Toolbar> */}
     </div>
   );
 }
