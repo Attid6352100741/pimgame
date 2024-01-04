@@ -1,1 +1,14 @@
-
+body {
+    font-size: 14px;
+  }
+  
+  div.mini-box {
+    min-width: 13vw;
+  }
+  
+  @media only screen and (max-width: 600px) {
+    div.mini-box {
+      min-width: 100%;
+    }
+  }
+  

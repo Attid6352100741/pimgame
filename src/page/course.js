@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import SendIcon from '@mui/icons-material/Send';
 import HistoryIcon from '@mui/icons-material/History';
+import '../style/course.css';
 
 function Course() {
     const { user, logout } = useUser();
@@ -72,7 +73,7 @@ function Course() {
         };
 
         return (
-            <div style={{ minWidth: '13vw' }}>
+            <div style={{ minWidth: '200px' }}>
                 <ListItem key={course.id} button onClick={handleCourseClick} selected={selectedListItem === course.id} style={{ borderRadius: '20px', marginBottom: '3%' }}>
                     <ListItemAvatar>
                         <Avatar style={{ backgroundColor: 'transparent' }}>

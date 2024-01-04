@@ -58,8 +58,8 @@ function Login() {
   return (
     <div className='main-content' style={{
       height: '100vh',
-      backgroundImage: `url(${loginBackground})`,
-      backgroundSize: 'cover',
+      // backgroundImage: `url(${loginBackground})`,
+      // backgroundSize: 'cover',
       margin: '0px',
       padding: '0px',
       overflowY: 'auto',
