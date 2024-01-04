@@ -64,11 +64,6 @@ function Login() {
       padding: '0px',
       overflowY: 'auto',
     }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', bgcolor: '#8ac3e3' }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          {/* เนื้อหาใน Toolbar ด้านบน */}
-        </div>
-      </Toolbar>
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
