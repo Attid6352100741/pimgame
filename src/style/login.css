@@ -1,27 +1,17 @@
-body {
-    background-color: #f0f0f0;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+@media screen and (max-width: 600px) {
+  .main-content {
+    background-position: center; /* ตัวอย่างการปรับ background position */
   }
-  
-  .App {
-    text-align: center;
-    color: #333;
+
+  .container {
+    padding: 20px; /* ตัวอย่างการปรับระยะห่าง */
   }
-  
-  form {
-    margin-top: 20px;
+
+  .toolbar-bottom {
+    width: 100%; /* ตัวอย่างการปรับขนาดของ Toolbar ด้านล่าง */
   }
-  
-  .centered-paper {
-    width: 100%;
-    margin: 0 auto;
-    display: flex;
-    flexDirection: column;
-    alignItems: center;
-    justifyContent: center;
-    padding: 30px;
+
+  .social-icons {
+    margin-right: 10%; /* ตัวอย่างการปรับระยะห่างของไอคอนโซเชียลมีเดีย */
   }
+}

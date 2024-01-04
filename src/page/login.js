@@ -11,6 +11,7 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import CallIcon from '@mui/icons-material/Call';
 import { Link } from 'react-router-dom';
+import '../style/login.css';
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -34,9 +35,9 @@ function Login() {
     event.preventDefault();
 
     const testUsers = [
-      { id: '1', username: 'Raccoon', password: '123' , firstname:'Micheal' , lastname:'Johansan' , personid:'6852100741'},
-      { id: '2', username: 'Cat', password: '123' , firstname:'Steven' , lastname:'Blackburgur' , personid:'6852100732'},
-      { id: '3', username: 'Dog', password: '123' , firstname:'Jonathan' , lastname:'Bermington' , personid:'6852100748'},
+      { id: '1', username: 'Raccoon', password: '123', firstname: 'Micheal', lastname: 'Johansan', personid: '6852100741' },
+      { id: '2', username: 'Cat', password: '123', firstname: 'Steven', lastname: 'Blackburgur', personid: '6852100732' },
+      { id: '3', username: 'Dog', password: '123', firstname: 'Jonathan', lastname: 'Bermington', personid: '6852100748' },
     ];
 
     const lowerCaseUsername = username.toLowerCase();
@@ -46,12 +47,13 @@ function Login() {
 
     if (user) {
       login(user.id, user.username, user.firstname, user.lastname, user.personid);
+
       setLoginStatus('success');
       console.log('เข้าสู่ระบบสำเร็จ');
       console.log('User', user);
       setTimeout(() => {
         navigate('/course');
-      }, 1000); 
+      }, 1000);
     } else {
       setLoginStatus('error');
       console.log('ชื่อผู้ใช้หรือรหัสผ่านผิด');
@@ -84,6 +86,7 @@ function Login() {
           </Typography>
           <Box sx={{ mt: 1 }}>
             <TextField
+              style={{minWidth:'250px'}}
               margin="normal"
               required
               fullWidth
@@ -132,7 +135,7 @@ function Login() {
       </Container>
 
 
-      <Toolbar sx={{ bgcolor: '#8ac3e3', position: 'absolute', bottom: '0', left: '0', width: '97.5%' }}>
+      {/* <Toolbar sx={{ bgcolor: '#8ac3e3', position: 'absolute', bottom: '0', left: '0', width: "100%" }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ position: 'absolute', bottom: '0', right: '0', marginRight: '3%' }}>
             <Tooltip title="Facebook">
@@ -187,7 +190,7 @@ function Login() {
             </Tooltip>
           </div>
         </div>
-      </Toolbar>
+      </Toolbar> */}
     </div>
   );
 }
