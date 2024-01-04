@@ -44,14 +44,14 @@ function Login() {
       login(user.id, user.username, user.firstname, user.lastname, user.personid);
 
       setLoginStatus('success');
-      console.log('เข้าสู่ระบบสำเร็จ');
+      console.log('Login Success');
       console.log('User', user);
       setTimeout(() => {
         navigate('/course');
       }, 1000);
     } else {
       setLoginStatus('error');
-      console.log('ชื่อผู้ใช้หรือรหัสผ่านผิด');
+      console.log('Username or Password Incorrect');
     }
   };
 
@@ -64,6 +64,11 @@ function Login() {
       padding: '0px',
       overflowY: 'auto',
     }}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', bgcolor: '#8ac3e3' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {/* เนื้อหาใน Toolbar ด้านบน */}
+        </div>
+      </Toolbar>
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
@@ -88,7 +93,7 @@ function Login() {
               required
               fullWidth
               id="username"
-              label="ชื่อผู้ใช้"
+              label="Username"
               name="username"
               autoFocus
               value={username}
@@ -99,7 +104,7 @@ function Login() {
               required
               fullWidth
               name="password"
-              label="รหัสผ่าน"
+              label="Password"
               type="password"
               id="password"
               value={password}
@@ -111,19 +116,19 @@ function Login() {
               sx={{ mt: 3, mb: 2 }}
               onClick={handleSubmit}
             >
-              เข้าสู่ระบบ
+              Login
             </Button>
           </Box>
           <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <p style={{ color: 'gray', fontSize: '16px', margin: '0' }}>
               {loginStatus === 'success' && (
                 <div style={{ color: 'green', marginBottom: '10px' }}>
-                  เข้าสู่ระบบสำเร็จ
+                  Login Success
                 </div>
               )}
               {loginStatus === 'error' && (
                 <div style={{ color: 'red', marginBottom: '10px' }}>
-                  ชื่อผู้ใช้ หรือ รหัสผ่านผิดพลาด
+                  Username or Password Incorrect
                 </div>
               )}
             </p>

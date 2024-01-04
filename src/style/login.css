@@ -1,17 +1,27 @@
-@media screen and (max-width: 600px) {
+/* login.css */
+
+body {
+  font-size: 14px;
+}
+@media only screen and (max-width: 600px) {
   .main-content {
-    background-position: center; /* ตัวอย่างการปรับ background position */
+    height: auto;
+    padding: 20px;
   }
 
-  .container {
-    padding: 20px; /* ตัวอย่างการปรับระยะห่าง */
+  .main-content,
+  .main-content h1,
+  .main-content p,
+  .main-content label,
+  .main-content button {
+    font-size: 18px;
+  }
+  
+  .main-content input {
+    width: 100%;
   }
 
-  .toolbar-bottom {
-    width: 100%; /* ตัวอย่างการปรับขนาดของ Toolbar ด้านล่าง */
-  }
-
-  .social-icons {
-    margin-right: 10%; /* ตัวอย่างการปรับระยะห่างของไอคอนโซเชียลมีเดีย */
+  .main-content button {
+    width: 100%;
   }
 }
