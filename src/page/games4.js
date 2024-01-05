@@ -116,7 +116,6 @@ function Games4() {
         }
     }, [choices1, choices2, choices3, choices4]);
 
-
     const handleClickOpen = () => {
         setOpenDialog(true);
     };
@@ -134,8 +133,6 @@ function Games4() {
             handleCountdown();
         }
     };
-
-
 
     const handleSubmit = () => {
         handleClickOpen();
@@ -202,7 +199,6 @@ function Games4() {
             navigate('/course');
         }, countdown * 1000);
     };
-
 
     return (
         <div>

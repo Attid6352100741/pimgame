@@ -15,7 +15,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AppBarToolbar from '../components/AppBarToolbar';
 
-
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -116,7 +115,6 @@ function Games3() {
         }
     }, [choices1, choices2, choices3, choices4]);
 
-
     const handleClickOpen = () => {
         setOpenDialog(true);
     };
@@ -134,8 +132,6 @@ function Games3() {
             handleCountdown();
         }
     };
-
-
 
     const handleSubmit = () => {
         handleClickOpen();
@@ -202,7 +198,6 @@ function Games3() {
             navigate('/course');
         }, countdown * 1000);
     };
-
 
     return (
         <div>
