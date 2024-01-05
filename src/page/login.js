@@ -1,4 +1,4 @@
-import { Button, Toolbar, Typography, Avatar, Box } from "@mui/material";
+import { Button, Typography, Avatar, Box } from "@mui/material";
 import React, { useState } from 'react';
 import { useUser } from '../components/UserContext';
 import TextField from '@mui/material/TextField';

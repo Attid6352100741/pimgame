@@ -44,12 +44,14 @@ function Games1() {
     const [testHistory, setTestHistory] = useState([]);
     const [score, setScore] = useState(0);
     const [submitted, setSubmitted] = useState(false);
+    const [countdown, setCountdown] = useState(10);
+    const [counting, setCounting] = useState(false);
+    const [round, setRound] = useState(0);
 
     const [shuffledChoices1, setShuffledChoices1] = useState(shuffleArray(choices1));
     const [shuffledChoices2, setShuffledChoices2] = useState(shuffleArray(choices2));
     const [shuffledChoices3, setShuffledChoices3] = useState(shuffleArray(choices3));
     const [shuffledChoices4, setShuffledChoices4] = useState(shuffleArray(choices4));
-
     const [openDialog, setOpenDialog] = React.useState(false);
 
     const handleChange = (choices, setChoice, setShuffledChoices) => (event) => {
@@ -110,25 +112,28 @@ function Games1() {
     }, [choices1, choices2, choices3, choices4]);
 
 
-
     const handleClickOpen = () => {
         setOpenDialog(true);
     };
 
     const handleClose = (confirmed) => {
+        setOpenDialog(false);
+
         if (confirmed) {
             setSubmitted(true);
             checkAnswers();
             ["game1Choice1", "game1Choice2", "game1Choice3", "game1Choice4"].forEach((choiceKey) => {
                 localStorage.removeItem(`${choiceKey}_${user.id}`);
             });
+
+            handleCountdown();
         }
-        setOpenDialog(false);
     };
-    
+
+
+
     const handleSubmit = () => {
         handleClickOpen();
-        console.log("Submit clicked");
     };
 
     const checkAnswers = () => {
@@ -171,9 +176,25 @@ function Games1() {
         localStorage.removeItem(`game1Score_${user.id}`);
         localStorage.setItem(`game1Score_${user.id}`, newScore.toString());
         localStorage.setItem(`testHistory_${user.id}`, JSON.stringify(updatedTestHistory));
+
+        setRound((prevRound) => prevRound + 1);
+        localStorage.setItem(`round_course1_${user.id}`, (round + 1).toString());
     };
 
+    const handleCountdown = () => {
+        setCounting(true);
 
+        const countdownInterval = setInterval(() => {
+            setCountdown((prevCountdown) => prevCountdown - 1);
+        }, 1000);
+
+        setTimeout(() => {
+            clearInterval(countdownInterval);
+            setCounting(false);
+            setCountdown(5);
+            navigate('/course');
+        }, countdown * 1000);
+    };
 
 
     return (
@@ -274,28 +295,38 @@ function Games1() {
                         <Button variant="contained" color="primary" onClick={handleSubmit}>
                             Submit
                         </Button>
-                        <Dialog
-                            open={openDialog}
-                            onClose={handleClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                        >
-                            <DialogTitle id="alert-dialog-title">Confirmation</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
-                                    Are you sure you want to submit your answers?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => handleClose(false)} color="primary">
-                                    Cancel
-                                </Button>
-                                <Button onClick={() => handleClose(true)} color="primary" autoFocus>
-                                    Confirm
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
                     </div>
+                    <div>
+                        {counting && (
+                            <div style={{ marginTop: '10px' }}>
+                                <p>Back to the main page in {countdown} seconds</p>
+                            </div>
+                        )}
+                    </div>
+
+
+                    <Dialog
+                        open={openDialog}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">Confirmation</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                Are you sure you want to submit your answers?
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => handleClose(false)} color="primary">
+                                Cancel
+                            </Button>
+                            <Button onClick={() => handleClose(true)} color="primary" autoFocus>
+                                Confirm
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+
                 </Box>
 
             </Container>
