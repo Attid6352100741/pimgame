@@ -68,19 +68,24 @@ function Games2() {
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
-
+    
         if (storedUser) {
             const userId = storedUser.id;
-
+    
             const storedScore = localStorage.getItem(`game2Score_${userId}`);
             const storedTestHistory = localStorage.getItem(`testHistory_${userId}`);
-
+            const storedRound = localStorage.getItem(`round_course2_${userId}`);
+    
             if (storedScore) {
                 setScore(parseInt(storedScore, 10));
             }
-
+    
             if (storedTestHistory) {
                 setTestHistory(JSON.parse(storedTestHistory));
+            }
+    
+            if (storedRound) {
+                setRound(parseInt(storedRound, 10));
             }
 
             const storedChoice1 = localStorage.getItem(`game2Choice1_${userId}`);
@@ -160,7 +165,7 @@ function Games2() {
         const currentDateTime = new Date();
         const currentDate = currentDateTime.toLocaleDateString('th-TH');
         const currentTime = currentDateTime.toLocaleTimeString('th-TH');
-
+    
         const updatedTestHistory = [
             ...testHistory,
             {
@@ -170,15 +175,17 @@ function Games2() {
                 time: currentTime,
             },
         ];
-
+    
         setTestHistory(updatedTestHistory);
-
+    
         localStorage.removeItem(`game2Score_${user.id}`);
         localStorage.setItem(`game2Score_${user.id}`, newScore.toString());
         localStorage.setItem(`testHistory_${user.id}`, JSON.stringify(updatedTestHistory));
-
-        setRound((prevRound) => prevRound + 1);
-        localStorage.setItem(`round_course2_${user.id}`, (round + 1).toString());
+    
+        if (round < 5) {
+            setRound((prevRound) => prevRound + 1);
+            localStorage.setItem(`round_course2_${user.id}`, (round + 1).toString());
+        }
     };
 
     const handleCountdown = () => {
@@ -212,7 +219,7 @@ function Games2() {
                         borderRadius: "15px",
                     }}
                 >
-                    <h3 style={{ marginBottom: '10%' }}>English Word Game 1</h3>
+                    <h3 style={{ marginBottom: '10%' }}>English Word Game 2</h3>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'flex-start', marginBottom: '10px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                             <InputLabel id="startText" sx={{ mb: 0 }}>Start Text</InputLabel>

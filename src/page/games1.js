@@ -44,7 +44,7 @@ function Games1() {
     const [testHistory, setTestHistory] = useState([]);
     const [score, setScore] = useState(0);
     const [submitted, setSubmitted] = useState(false);
-    const [countdown, setCountdown] = useState(1);
+    const [countdown, setCountdown] = useState(5);
     const [counting, setCounting] = useState(false);
     const [round, setRound] = useState(0);
 
