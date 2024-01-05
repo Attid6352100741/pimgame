@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect , useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Box, Button } from "@mui/material";
 import Container from '@mui/material/Container';
 import { useUser } from '../components/UserContext';
@@ -14,6 +14,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import AppBarToolbar from '../components/AppBarToolbar';
+
 
 const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -43,6 +44,9 @@ function Games2() {
     const [testHistory, setTestHistory] = useState([]);
     const [score, setScore] = useState(0);
     const [submitted, setSubmitted] = useState(false);
+    const [countdown, setCountdown] = useState(5);
+    const [counting, setCounting] = useState(false);
+    const [round, setRound] = useState(0);
 
     const [shuffledChoices1, setShuffledChoices1] = useState(shuffleArray(choices1));
     const [shuffledChoices2, setShuffledChoices2] = useState(shuffleArray(choices2));
@@ -51,50 +55,85 @@ function Games2() {
     const [openDialog, setOpenDialog] = React.useState(false);
 
     const handleChange = (choices, setChoice, setShuffledChoices) => (event) => {
-        setChoice(event.target.value);
+        const selectedChoice = event.target.value;
         setShuffledChoices(shuffleArray([...choices]));
+        setChoice((prevChoice) => {
+            localStorage.setItem(`game2Choice1_${user.id}`, prevChoice === choice1 ? selectedChoice : choice1 || '');
+            localStorage.setItem(`game2Choice2_${user.id}`, prevChoice === choice2 ? selectedChoice : choice2 || '');
+            localStorage.setItem(`game2Choice3_${user.id}`, prevChoice === choice3 ? selectedChoice : choice3 || '');
+            localStorage.setItem(`game2Choice4_${user.id}`, prevChoice === choice4 ? selectedChoice : choice4 || '');
+            return selectedChoice;
+        });
     };
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
-    
+
         if (storedUser) {
             const userId = storedUser.id;
-    
+
             const storedScore = localStorage.getItem(`game2Score_${userId}`);
             const storedTestHistory = localStorage.getItem(`testHistory_${userId}`);
-    
+
             if (storedScore) {
                 setScore(parseInt(storedScore, 10));
             }
-    
+
             if (storedTestHistory) {
                 setTestHistory(JSON.parse(storedTestHistory));
             }
-    
+
+            const storedChoice1 = localStorage.getItem(`game2Choice1_${userId}`);
+            const storedChoice2 = localStorage.getItem(`game2Choice2_${userId}`);
+            const storedChoice3 = localStorage.getItem(`game2Choice3_${userId}`);
+            const storedChoice4 = localStorage.getItem(`game2Choice4_${userId}`);
+
+            if (storedChoice1) {
+                setChoice1(storedChoice1);
+            }
+
+            if (storedChoice2) {
+                setChoice2(storedChoice2);
+            }
+
+            if (storedChoice3) {
+                setChoice3(storedChoice3);
+            }
+
+            if (storedChoice4) {
+                setChoice4(storedChoice4);
+            }
+
             setShuffledChoices1(shuffleArray(choices1));
             setShuffledChoices2(shuffleArray(choices2));
             setShuffledChoices3(shuffleArray(choices3));
             setShuffledChoices4(shuffleArray(choices4));
         }
     }, [choices1, choices2, choices3, choices4]);
-    
-    
+
+
     const handleClickOpen = () => {
         setOpenDialog(true);
     };
 
     const handleClose = (confirmed) => {
+        setOpenDialog(false);
+
         if (confirmed) {
             setSubmitted(true);
             checkAnswers();
+            ["game2Choice1", "game2Choice2", "game2Choice3", "game2Choice4"].forEach((choiceKey) => {
+                localStorage.removeItem(`${choiceKey}_${user.id}`);
+            });
+
+            handleCountdown();
         }
-        setOpenDialog(false);
     };
+
+
 
     const handleSubmit = () => {
         handleClickOpen();
-        console.log("Submit clicked");
     };
 
     const checkAnswers = () => {
@@ -133,11 +172,29 @@ function Games2() {
         ];
 
         setTestHistory(updatedTestHistory);
+
         localStorage.removeItem(`game2Score_${user.id}`);
         localStorage.setItem(`game2Score_${user.id}`, newScore.toString());
         localStorage.setItem(`testHistory_${user.id}`, JSON.stringify(updatedTestHistory));
+
+        setRound((prevRound) => prevRound + 1);
+        localStorage.setItem(`round_course2_${user.id}`, (round + 1).toString());
     };
 
+    const handleCountdown = () => {
+        setCounting(true);
+
+        const countdownInterval = setInterval(() => {
+            setCountdown((prevCountdown) => prevCountdown - 1);
+        }, 1000);
+
+        setTimeout(() => {
+            clearInterval(countdownInterval);
+            setCounting(false);
+            setCountdown(5);
+            navigate('/course');
+        }, countdown * 1000);
+    };
 
 
     return (
@@ -155,7 +212,7 @@ function Games2() {
                         borderRadius: "15px",
                     }}
                 >
-                    <h3 style={{ marginBottom: '10%' }}>English Word Game 2</h3>
+                    <h3 style={{ marginBottom: '10%' }}>English Word Game 1</h3>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'flex-start', marginBottom: '10px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                             <InputLabel id="startText" sx={{ mb: 0 }}>Start Text</InputLabel>
@@ -238,28 +295,38 @@ function Games2() {
                         <Button variant="contained" color="primary" onClick={handleSubmit}>
                             Submit
                         </Button>
-                        <Dialog
-                            open={openDialog}
-                            onClose={handleClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                        >
-                            <DialogTitle id="alert-dialog-title">Confirmation</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
-                                    Are you sure you want to submit your answers?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={() => handleClose(false)} color="primary">
-                                    Cancel
-                                </Button>
-                                <Button onClick={() => handleClose(true)} color="primary" autoFocus>
-                                    Confirm
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
                     </div>
+                    <div>
+                        {counting && (
+                            <div style={{ marginTop: '10px' }}>
+                                <p>Back to the main page in {countdown} seconds</p>
+                            </div>
+                        )}
+                    </div>
+
+
+                    <Dialog
+                        open={openDialog}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">Confirmation</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                Are you sure you want to submit your answers?
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => handleClose(false)} color="primary">
+                                Cancel
+                            </Button>
+                            <Button onClick={() => handleClose(true)} color="primary" autoFocus>
+                                Confirm
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+
                 </Box>
 
             </Container>

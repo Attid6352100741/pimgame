@@ -44,6 +44,7 @@ const AppBarToolbar = ({ user: propUser }) => {
     
         courseData.forEach((course) => {
             localStorage.removeItem(`game${course.id}Score_${user.id}`);
+            localStorage.removeItem(`round_course${course.id}_${user.id}`);
         });
     
         localStorage.removeItem(`testHistory_${user.id}`);

@@ -10,9 +10,10 @@ import { useNavigate } from 'react-router-dom';
 import AppBarToolbar from '../components/AppBarToolbar';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
 import SendIcon from '@mui/icons-material/Send';
 import HistoryIcon from '@mui/icons-material/History';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import '../style/course.css';
 
 function Course() {
@@ -24,6 +25,8 @@ function Course() {
     const [courseScores, setCourseScores] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedListItem, setSelectedListItem] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     const handleLogout = () => {
         logout();
@@ -64,7 +67,16 @@ function Course() {
         }
     }, [user, navigate, selectedCourse, setTestHistory]);
 
+    const handleTestButtonClick = () => {
+        const storedRound = parseInt(localStorage.getItem(`round_course${selectedCourse.id}_${user.id}`), 10) || 0;
 
+        if (selectedCourse && storedRound === 5) {
+            setSnackbarMessage('Your Test Is Limited!');
+            setSnackbarOpen(true);
+        } else {
+            navigate(`/course/games/${selectedCourse.id}`);
+        }
+    };
 
     const CourseListItem = ({ course }) => {
         const [round, setRound] = useState(0);
@@ -73,17 +85,17 @@ function Course() {
             const storedUser = JSON.parse(localStorage.getItem('user'));
             if (storedUser) {
                 const userId = storedUser.id;
-                const storedRound = localStorage.getItem(`round_course${course.id}_${userId}`);
-                if (storedRound) {
-                    setRound(parseInt(storedRound, 10));
-                }
+                const storedRound = parseInt(localStorage.getItem(`round_course${course.id}_${userId}`), 10) || 0;
+                setRound(storedRound);
             }
         }, [course]);
 
         const handleCourseClick = () => {
             setSelectedCourse(course);
             setSelectedListItem(course.id);
+            setRound(parseInt(localStorage.getItem(`round_course${course.id}_${user.id}`), 10) || 0);
         };
+
 
         return (
             <div style={{ minWidth: '200px' }}>
@@ -92,7 +104,7 @@ function Course() {
                         <Avatar style={{ backgroundColor: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <LibraryBooksIcon style={{ color: '#4b76db', fontSize: '19px' }} />
                             <p style={{ margin: '5px', color: 'black', fontSize: '14px' }}>
-                                {round}/3
+                                {round}/5
                             </p>
                         </Avatar>
                     </ListItemAvatar>
@@ -104,6 +116,7 @@ function Course() {
             </div>
         );
     };
+
 
 
     function TestHistoryTable({ testHistory }) {
@@ -133,11 +146,19 @@ function Course() {
         );
     }
 
-
     return (
         <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
-            <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={5000}
+                onClose={() => setSnackbarOpen(false)}
+            >
+                <Alert severity="error" onClose={() => setSnackbarOpen(false)}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+            <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }}>
                     {/* First Box */}
                     <div>
@@ -153,7 +174,7 @@ function Course() {
                             }}
                         >
                             <h4 style={{}}>Course</h4>
-                            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', borderRadius: "15px", }}>
+                            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', borderRadius: "15px" }}>
                                 {courseScores.map((course) => (
                                     <CourseListItem key={course.id} course={course} />
                                 ))}
@@ -203,11 +224,14 @@ function Course() {
                                             >
                                                 History
                                             </Button>
-                                            <Link to={`/course/games/${selectedCourse.id}`} style={{ textDecoration: 'none' }}>
-                                                <Button variant="contained" endIcon={<SendIcon />} style={{ backgroundColor: '#4b76db', marginLeft: '15px' }}>
-                                                    Test
-                                                </Button>
-                                            </Link>
+                                            <Button
+                                                variant="contained"
+                                                endIcon={<SendIcon />}
+                                                style={{ backgroundColor: '#4b76db', marginLeft: '15px' }}
+                                                onClick={handleTestButtonClick}
+                                            >
+                                                Test
+                                            </Button>
                                         </div>
                                     </div>
                                     <div>

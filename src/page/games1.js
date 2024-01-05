@@ -44,7 +44,7 @@ function Games1() {
     const [testHistory, setTestHistory] = useState([]);
     const [score, setScore] = useState(0);
     const [submitted, setSubmitted] = useState(false);
-    const [countdown, setCountdown] = useState(10);
+    const [countdown, setCountdown] = useState(1);
     const [counting, setCounting] = useState(false);
     const [round, setRound] = useState(0);
 
@@ -68,19 +68,24 @@ function Games1() {
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
-
+    
         if (storedUser) {
             const userId = storedUser.id;
-
+    
             const storedScore = localStorage.getItem(`game1Score_${userId}`);
             const storedTestHistory = localStorage.getItem(`testHistory_${userId}`);
-
+            const storedRound = localStorage.getItem(`round_course1_${userId}`);
+    
             if (storedScore) {
                 setScore(parseInt(storedScore, 10));
             }
-
+    
             if (storedTestHistory) {
                 setTestHistory(JSON.parse(storedTestHistory));
+            }
+    
+            if (storedRound) {
+                setRound(parseInt(storedRound, 10));
             }
 
             const storedChoice1 = localStorage.getItem(`game1Choice1_${userId}`);
@@ -160,7 +165,7 @@ function Games1() {
         const currentDateTime = new Date();
         const currentDate = currentDateTime.toLocaleDateString('th-TH');
         const currentTime = currentDateTime.toLocaleTimeString('th-TH');
-
+    
         const updatedTestHistory = [
             ...testHistory,
             {
@@ -170,15 +175,17 @@ function Games1() {
                 time: currentTime,
             },
         ];
-
+    
         setTestHistory(updatedTestHistory);
-
+    
         localStorage.removeItem(`game1Score_${user.id}`);
         localStorage.setItem(`game1Score_${user.id}`, newScore.toString());
         localStorage.setItem(`testHistory_${user.id}`, JSON.stringify(updatedTestHistory));
-
-        setRound((prevRound) => prevRound + 1);
-        localStorage.setItem(`round_course1_${user.id}`, (round + 1).toString());
+    
+        if (round < 5) {
+            setRound((prevRound) => prevRound + 1);
+            localStorage.setItem(`round_course1_${user.id}`, (round + 1).toString());
+        }
     };
 
     const handleCountdown = () => {
