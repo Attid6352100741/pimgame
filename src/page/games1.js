@@ -86,6 +86,10 @@ function Games1() {
             if (storedRound) {
                 setRound(parseInt(storedRound, 10));
             }
+            
+            if (storedRound && parseInt(storedRound, 10) === 5) {
+                navigate('/course');
+            }
 
             const storedChoice1 = localStorage.getItem(`game1Choice1_${userId}`);
             const storedChoice2 = localStorage.getItem(`game1Choice2_${userId}`);
@@ -113,7 +117,7 @@ function Games1() {
             setShuffledChoices3(shuffleArray(choices3));
             setShuffledChoices4(shuffleArray(choices4));
         }
-    }, [choices1, choices2, choices3, choices4]);
+    }, [choices1, choices2, choices3, choices4, navigate, user]);
 
 
     const handleClickOpen = () => {
@@ -196,7 +200,7 @@ function Games1() {
             clearInterval(countdownInterval);
             setCounting(false);
             setCountdown(5);
-            navigate('/course');
+            navigate('/home/course');
         }, countdown * 1000);
     };
 

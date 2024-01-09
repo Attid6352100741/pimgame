@@ -19,8 +19,8 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (id, username , firstname , lastname , personid) => {
-    const newUser = { id, username, firstname , lastname , personid ,image: null };
+  const login = (id, username , firstname , lastname , personid , roll) => {
+    const newUser = { id, username, firstname , lastname , personid , roll ,image: null };
     setUser(newUser);
     localStorage.setItem('user', JSON.stringify(newUser));
   };

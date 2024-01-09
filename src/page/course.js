@@ -27,11 +27,16 @@ function Course() {
     const [selectedListItem, setSelectedListItem] = useState(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [animation, setAnimation] = useState(false);
 
     const handleLogout = () => {
         logout();
         navigate('/login');
     };
+
+    useEffect(() => {
+        setAnimation(true);
+    }, []);
 
     useEffect(() => {
         const fetchedScores = [];
@@ -74,7 +79,7 @@ function Course() {
             setSnackbarMessage('Your Test Is Limited!');
             setSnackbarOpen(true);
         } else {
-            navigate(`/course/games/${selectedCourse.id}`);
+            navigate(`games/${selectedCourse.id}`);
         }
     };
 
@@ -147,12 +152,13 @@ function Course() {
     }
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' , }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={5000}
                 onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
                 <Alert severity="error" onClose={() => setSnackbarOpen(false)}>
                     {snackbarMessage}
@@ -171,6 +177,8 @@ function Course() {
                                 alignItems: 'center',
                                 bgcolor: 'background.paper',
                                 borderRadius: "15px",
+                                transition: 'transform 0.6s ease-in-out',
+                                transform: animation ? 'translateY(0%)' : 'translateY(50%)',
                             }}
                         >
                             <h4 style={{}}>Course</h4>
@@ -192,6 +200,8 @@ function Course() {
                                 alignItems: 'center',
                                 bgcolor: 'background.paper',
                                 borderRadius: "15px",
+                                transition: 'transform 0.6s ease-in-out',
+                                transform: animation ? 'translateY(0%)' : 'translateY(50%)',
                             }}
                         >
                             {selectedCourse && (

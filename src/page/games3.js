@@ -87,6 +87,10 @@ function Games3() {
                 setRound(parseInt(storedRound, 10));
             }
 
+            if (storedRound && parseInt(storedRound, 10) === 5) {
+                navigate('/course');
+            }
+
             const storedChoice1 = localStorage.getItem(`game3Choice1_${userId}`);
             const storedChoice2 = localStorage.getItem(`game3Choice2_${userId}`);
             const storedChoice3 = localStorage.getItem(`game3Choice3_${userId}`);
@@ -113,7 +117,7 @@ function Games3() {
             setShuffledChoices3(shuffleArray(choices3));
             setShuffledChoices4(shuffleArray(choices4));
         }
-    }, [choices1, choices2, choices3, choices4]);
+    }, [choices1, choices2, choices3, choices4, navigate, user]);
 
     const handleClickOpen = () => {
         setOpenDialog(true);

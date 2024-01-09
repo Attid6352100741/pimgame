@@ -76,7 +76,7 @@ const AppBarToolbar = ({ user: propUser }) => {
     return (
         <>
             <AppBar position="static">
-                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: '75px', bgcolor: '#8ac3e3' }}>
+                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: '75px', bgcolor: '#51ade0' }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <label>
                             <IconButton
@@ -116,7 +116,7 @@ const AppBarToolbar = ({ user: propUser }) => {
                             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                         >
-                            <MenuItem component={Link} to="/course" onClick={handleMenuClose}>
+                            <MenuItem component={Link} to="/home" onClick={handleMenuClose}>
                                 Home
                             </MenuItem>
                             <MenuItem onClick={() => { handleMenuClose(); handleClickOpen(); }}>

@@ -88,6 +88,10 @@ function Games4() {
                 setRound(parseInt(storedRound, 10));
             }
 
+            if (storedRound && parseInt(storedRound, 10) === 5) {
+                navigate('/course');
+            }
+
             const storedChoice1 = localStorage.getItem(`game4Choice1_${userId}`);
             const storedChoice2 = localStorage.getItem(`game4Choice2_${userId}`);
             const storedChoice3 = localStorage.getItem(`game4Choice3_${userId}`);
@@ -114,7 +118,7 @@ function Games4() {
             setShuffledChoices3(shuffleArray(choices3));
             setShuffledChoices4(shuffleArray(choices4));
         }
-    }, [choices1, choices2, choices3, choices4]);
+    }, [choices1, choices2, choices3, choices4, navigate, user]);
 
     const handleClickOpen = () => {
         setOpenDialog(true);
