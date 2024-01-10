@@ -15,6 +15,7 @@ function Home() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
+    const isStudent = user && user.roll === 'Student';
 
     const handleClose = () => setOpenDialog(false);
 
@@ -41,36 +42,38 @@ function Home() {
             <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }}>
                     {/* First Box */}
-                    <div>
-                        <Box
-                            sx={{
-                                marginTop: 5,
-                                marginRight: '10px',
-                                padding: "20px",
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                bgcolor: 'background.paper',
-                                borderRadius: "15px",
-                                transition: 'transform 0.4s ease-in-out',
-                                transform: openDialog ? 'translateY(+70px)' : 'translateY(-150)',
-                            }}
-                        >
-                            <div style={{
-                                backgroundImage: `url(${systempicture})`,
-                                backgroundSize: 'cover',
-                                width: '250px',
-                                height: '250px',
-                                margin: '0px',
-                                padding: '0px',
-                                overflowY: 'auto',
-                            }}>
-                            </div>
-                            <div>
-                                <Button variant="contained">Setting</Button>
-                            </div>
-                        </Box>
-                    </div>
+                    {isStudent ? null : (
+                        <div>
+                            <Box
+                                sx={{
+                                    marginTop: 5,
+                                    marginRight: '10px',
+                                    padding: "20px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    bgcolor: 'background.paper',
+                                    borderRadius: "15px",
+                                    transition: 'transform 0.4s ease-in-out',
+                                    transform: openDialog ? 'translateY(+70px)' : 'translateY(-150)',
+                                }}
+                            >
+                                <div style={{
+                                    backgroundImage: `url(${systempicture})`,
+                                    backgroundSize: 'cover',
+                                    width: '250px',
+                                    height: '250px',
+                                    margin: '0px',
+                                    padding: '0px',
+                                    overflowY: 'auto',
+                                }}>
+                                </div>
+                                <div>
+                                    <Button variant="contained">Setting</Button>
+                                </div>
+                            </Box>
+                        </div>
+                    )}
                     {/* Second Box */}
                     <div>
                         <Box

@@ -31,8 +31,8 @@ function Login() {
 
     const testUsers = [
       { id: '1', username: 'Raccoon', password: '123', firstname: 'Micheal', lastname: 'Johansan', personid: '6852100741' , roll:'Student'},
-      { id: '2', username: 'Cat', password: '123', firstname: 'Steven', lastname: 'Blackburgur', personid: '6852100732' , roll:'Student'},
-      { id: '3', username: 'Dog', password: '123', firstname: 'Jonathan', lastname: 'Bermington', personid: '6852100748' , roll:'Teacher'},
+      { id: '2', username: 'Cat', password: '123', firstname: 'Steven', lastname: 'Blackburgur', personid: '6852100732' , roll:'Teacher'},
+      { id: '3', username: 'Dog', password: '123', firstname: 'Jonathan', lastname: 'Bermington', personid: '6852100748' , roll:'Student'},
     ];
 
     const lowerCaseUsername = username.toLowerCase();

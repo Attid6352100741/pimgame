@@ -32,6 +32,7 @@ function Games1() {
         navigate('/login');
     };
 
+    //Course 1 Week 1
     const choices1 = useMemo(() => ["on", "like", "his", "dog's"], []);
     const choices2 = useMemo(() => ["be", "her", "am", "tail"], []);
     const choices3 = useMemo(() => ["do", "job", "time", "is"], []);
@@ -205,7 +206,7 @@ function Games1() {
     };
 
     return (
-        <div>
+        <div style={{backgroundColor: '#b9dff4'}}>
             <AppBarToolbar user={user} onLogout={handleLogout} testHistory={testHistory} />
             <Container component="main" maxWidth="xs">
                 <Box
