@@ -37,6 +37,7 @@ function Games1() {
     const choices2 = useMemo(() => ["be", "her", "am", "tail"], []);
     const choices3 = useMemo(() => ["do", "job", "time", "is"], []);
     const choices4 = useMemo(() => ["black", "work", "but", "im"], []);
+
     const [choice1, setChoice1] = useState('');
     const [choice2, setChoice2] = useState('');
     const [choice3, setChoice3] = useState('');
@@ -206,9 +207,9 @@ function Games1() {
     };
 
     return (
-        <div style={{backgroundColor: '#b9dff4'}}>
+        <div style={{backgroundColor: '#b9dff4' , minHeight: '100vh',}}>
             <AppBarToolbar user={user} onLogout={handleLogout} testHistory={testHistory} />
-            <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="md">
                 <Box
                     sx={{
                         marginTop: 5,

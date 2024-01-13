@@ -8,6 +8,7 @@ import { UserProvider } from './components/UserContext';
 import Games from './page/games';
 import Home from './page/home';
 import Testracing from './page/test_racing';
+import Courstsetting from './page/cousrtsetting';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -20,6 +21,7 @@ root.render(
           <Route path="/login" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/home/course" element={<Course />} />
+          <Route path="/home/course/setting/:courseId" element={<Courstsetting />} />
           <Route path="/home/course/games/:courseId/week/:week" element={<Games />} />
           <Route path="/home/testracing" element={<Testracing />} />
           <Route path="/test" element={<Games />} />

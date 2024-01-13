@@ -3,7 +3,8 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import { Box, Avatar, DialogTitle, Dialog, Typography } from "@mui/material";
+import MenuItem from '@mui/material/MenuItem';
+import { Box, Avatar, DialogTitle, Dialog, Typography, TextField, DialogContent } from "@mui/material";
 import Container from '@mui/material/Container';
 import { useUser } from '../components/UserContext';
 import { useNavigate } from 'react-router-dom';
@@ -12,18 +13,28 @@ import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import LinearProgress from '@mui/material/LinearProgress';
+import AddIcon from '@mui/icons-material/Add';
+import createCoursePicture from '../gif/createcourse.gif'
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
 import '../style/course.css';
 
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SendIcon from '@mui/icons-material/Send';
 import HistoryIcon from '@mui/icons-material/History';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 function Course() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
+    const [openCreateDialog, setCreateDialog] = useState(false);
     const handleClose = () => setOpenDialog(false);
+    const handleCloseCreate = () => setCreateDialog(false);
     const [testHistory, setTestHistory] = useState([]);
     const [courseScores, setCourseScores] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
@@ -32,20 +43,75 @@ function Course() {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [animationBox1, setAnimationBox1] = useState(false);
     const [animationBox2, setAnimationBox2] = useState(false);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [CourseName, setCourseName] = useState('');
+    const [selectedWeeks, setSelectedWeeks] = useState([]);
+    const [selectedType, setSelectedType] = useState([]);
     const [countdown] = useState(0.2);
     const [round, setRound] = useState(0);
+    const [courseData, setCourseData] = useState([]);
+    const isStudent = user && user.roll === 'Student';
 
-    const [courseData] = useState([
-        { id: 1, name: 'English Verb 1', weeks: ['1', '2', '3', '4'] },
-        { id: 2, name: 'English Verb 2', weeks: ['1', '2', '3'] },
-        { id: 3, name: 'English Verb 3', weeks: ['1', '2', '3', '4'] },
-        { id: 4, name: 'English Verb 4', weeks: ['1', '2'] },
-    ]);
+    const handleCreateCourse = () => {
+        console.log("CourseName:", CourseName);
+        console.log("selectedWeeks:", selectedWeeks);
+        console.log("selectedType:", selectedType);
+        console.log("startDate:", startDate);
+        console.log("endDate:", endDate);
+
+        if (!CourseName || selectedWeeks.length === 0 || !selectedType || !startDate || !endDate) {
+            setSnackbarMessage('Please fill in all required fields.');
+            setSnackbarOpen(true);
+            return;
+        }
+
+        const storedCourseList = JSON.parse(localStorage.getItem('CourseList')) || [];
+        const maxId = storedCourseList.reduce((max, course) => (course.id > max ? course.id : max), 0);
+        const weeksArray = Array.from({ length: Math.max(...selectedWeeks) }, (_, i) => i + 1);
+
+        const newCourse = {
+            id: maxId + 1,
+            name: CourseName,
+            type: selectedType,
+            startDate,
+            endDate,
+            weeks: weeksArray,
+        };
+
+        const updatedCourseList = [...storedCourseList, newCourse];
+        localStorage.setItem('CourseList', JSON.stringify(updatedCourseList));
+
+        setCourseName('');
+        setSelectedWeeks([]);
+        setSelectedType('');
+        setStartDate('');
+        setEndDate('');
+        handleCloseCreate();
+        window.location.reload();
+    };
 
     const handleLogout = () => {
         logout();
         navigate('/login');
     };
+
+    useEffect(() => {
+        const storedCourseList = JSON.parse(localStorage.getItem('CourseList')) || [];
+        setCourseData(storedCourseList);
+
+        console.log('Updated Course Data:', storedCourseList);
+    }, []);
+
+
+    const getCourseDataById = (courseId) => {
+        return courseData.find((course) => course.id === courseId);
+    };
+
+    useEffect(() => {
+        const storedCourseList = JSON.parse(localStorage.getItem('CourseList')) || [];
+        setCourseData(storedCourseList);
+    }, []);
 
     useEffect(() => {
         setAnimationBox1(true);
@@ -90,8 +156,52 @@ function Course() {
         }
     };
 
+    useEffect(() => {
+        const initialCourse = courseData.length > 0 ? courseData.reduce((minCourse, currentCourse) => (
+            currentCourse.id < minCourse.id ? currentCourse : minCourse
+        ), courseData[0]) : null;
+        if (initialCourse) {
+            setSelectedCourse({ ...initialCourse, weeks: initialCourse.weeks });
+            setSelectedListItem(initialCourse.id);
+            setRound(parseInt(localStorage.getItem(`round_course${initialCourse.id}_${user.id}`), 10) || 0);
+            setAnimationBox2(false);
+            setTimeout(() => {
+                setAnimationBox2(true);
+            }, countdown * 1000);
+            const storedWeeks = localStorage.getItem(`courseWeeks_${initialCourse.id}`);
+            const weeks = storedWeeks ? JSON.parse(storedWeeks) : [];
+            setSelectedWeeks(weeks);
+        }
+    }, [courseData, user]);
+
 
     const CourseListItem = ({ course }) => {
+        console.log('Course Object:', course);
+
+        const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+
+        const handleMenuClose = () => {
+            setMenuAnchorEl(null);
+        };
+
+        const handleMenuClick = (event) => {
+            setMenuAnchorEl(event.currentTarget);
+        };
+
+        const handleSettingClick = (courseId) => {
+            navigate(`/home/course/setting/${courseId}`);
+            handleMenuClose();
+        };
+
+        const handleDeleteClick = (courseId) => {
+            const storedCourseList = JSON.parse(localStorage.getItem('CourseList')) || [];
+            const updatedCourseList = storedCourseList.filter((course) => course.id !== courseId);
+            localStorage.setItem('CourseList', JSON.stringify(updatedCourseList));
+            setCourseData(updatedCourseList);
+            handleMenuClose();
+            window.location.reload();
+        };
+
 
         useEffect(() => {
             const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -111,11 +221,13 @@ function Course() {
             setTimeout(() => {
                 setAnimationBox2(true);
             }, countdown * 1000);
+            const storedWeeks = localStorage.getItem(`courseWeeks_${course.id}`);
+            const weeks = storedWeeks ? JSON.parse(storedWeeks) : [];
+            setSelectedWeeks(weeks);
         };
-
         return (
-            <div style={{ minWidth: '200px' }}>
-                <ListItem key={course.id} button onClick={() => handleCourseClick(course)} selected={selectedListItem === course.id} style={{ borderRadius: '20px', marginBottom: '3%' }}>
+            <div style={{ minWidth: '250px', marginBottom: '5%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <ListItem key={course.id} button onClick={() => handleCourseClick(course)} selected={selectedListItem === course.id} style={{ borderRadius: '20px', marginBottom: '3%', flex: '1' }}>
                     <ListItemAvatar>
                         <Avatar style={{ backgroundColor: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <LibraryBooksIcon style={{ color: '#4b76db' }} />
@@ -123,12 +235,31 @@ function Course() {
                     </ListItemAvatar>
                     <ListItemText
                         primary={course.name}
-                        secondary={<span style={{ color: course.score >= 10 ? '#28b02b' : 'red' }}>Score: {course.score}/20</span>}
                     />
                 </ListItem>
+                {isStudent ? null : (
+                    <div>
+                        <IconButton color="inherit" onClick={handleMenuClick}>
+                            <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                            anchorEl={menuAnchorEl}
+                            open={Boolean(menuAnchorEl)}
+                            onClose={handleMenuClose}
+                        >
+                            <MenuItem onClick={() => handleSettingClick(course.id)}>
+                                Settings
+                            </MenuItem>
+                            <MenuItem onClick={() => handleDeleteClick(course.id)}>
+                                Delete
+                            </MenuItem>
+                        </Menu>
+                    </div>
+                )}
             </div>
         );
     };
+
 
     function TestHistoryTable({ testHistory }) {
         return (
@@ -183,6 +314,7 @@ function Course() {
                                 alignItems: 'center',
                                 bgcolor: 'background.paper',
                                 borderRadius: "15px",
+                                position: 'relative',
                                 transition: 'transform 0.6s ease-in-out',
                                 transform: animationBox1 ? 'translateY(0%)' : 'translateY(50%)',
                             }}
@@ -193,9 +325,28 @@ function Course() {
                                     <CourseListItem key={course.id} course={course} />
                                 ))}
                             </List>
+                            {isStudent ? null : (
+                                <div style={{ position: 'absolute', bottom: 10, right: 10 }}>
+                                    <Button
+                                        variant="contained"
+                                        sx={{
+                                            backgroundColor: '#4b76db',
+                                            borderRadius: '50%',
+                                            width: '40px',
+                                            height: '40px',
+                                            minWidth: 'auto',
+                                            padding: 0,
+                                        }}
+                                        onClick={() => setCreateDialog(true)}
+                                    >
+                                        <AddIcon style={{ color: 'white' }} />
+                                    </Button>
+                                </div>
+                            )}
                         </Box>
                     </div>
 
+                    {/* Second Box */}
                     {selectedCourse && (
                         <div style={{ marginTop: '2.2%' }}>
                             {selectedCourse && selectedCourse.weeks && selectedCourse.weeks.map((week, index) => (
@@ -203,7 +354,7 @@ function Course() {
                                     <Box
                                         sx={{
                                             marginTop: 2,
-                                            padding: "40px",
+                                            padding: "30px",
                                             flexDirection: 'column',
                                             alignItems: 'center',
                                             bgcolor: 'background.paper',
@@ -220,10 +371,10 @@ function Course() {
                                                     </Avatar>
                                                 </div>
                                                 <div style={{ marginLeft: '1rem', flex: 1 }}>
-                                                    <h3>Practice {selectedCourse.id} Week {week}</h3>
+                                                    <h3>{selectedCourse.name} Week : {week}</h3>
                                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                                         <RestartAltIcon style={{ marginRight: '5px' }} />
-                                                        <p style={{ margin: '5px', color: 'black', fontSize: '16px'}}>
+                                                        <p style={{ margin: '5px', color: 'black', fontSize: '16px' }}>
                                                             {round}/5
                                                         </p>
                                                     </div>
@@ -248,7 +399,8 @@ function Course() {
                                                 </div>
                                             </div>
                                             {courseScores.map((course) => {
-                                                if (course.id === selectedCourse.id) {
+                                                const courseDataById = getCourseDataById(course.id);
+                                                if (courseDataById && courseDataById.id === selectedCourse.id) {
                                                     const progress = (course.score / 20) * 100;
                                                     const progressBarColor = progress < 100 ? '#e3d10e' : '#4caf50';
 
@@ -261,9 +413,9 @@ function Course() {
                                                                     height: 5,
                                                                     borderRadius: 5,
                                                                     marginBottom: '10px',
-                                                                    backgroundColor: '#d3d3d3', // เปลี่ยนสีพื้นหลังของ progress bar
+                                                                    backgroundColor: '#d3d3d3',
                                                                     '& .MuiLinearProgress-bar': {
-                                                                        backgroundColor: progressBarColor, // เปลี่ยนสีของ progress bar
+                                                                        backgroundColor: progressBarColor,
                                                                     },
                                                                 }}
                                                             />
@@ -301,6 +453,132 @@ function Course() {
                             <TestHistoryTable testHistory={testHistory.filter(test => test.course === selectedCourse?.name)} />
                         </div>
                     </DialogTitle>
+                </div>
+            </Dialog>
+
+            <Dialog
+                open={openCreateDialog}
+                onClose={handleCloseCreate}
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '15px',
+                }}
+            >
+                <div>
+                    <DialogTitle sx={{ textAlign: 'center' }}>
+                        <Typography>Create New Course</Typography>
+                    </DialogTitle>
+                    <DialogContent>
+                        <div>
+                            <div
+                                style={{
+                                    backgroundImage: `url(${createCoursePicture})`,
+                                    backgroundSize: 'cover',
+                                    width: '28vw',
+                                    height: '40vh',
+                                }}
+                            ></div>
+                            <div>
+                                <div style={{ display: 'flex', width: '100%', alignItems: 'flex-start' }}>
+                                    <div style={{ flex: 1, marginRight: '16px' }}>
+                                        <Typography style={{ marginBottom: '-5%' }}>
+                                            Course Name
+                                        </Typography>
+                                        <TextField
+                                            variant="outlined"
+                                            margin="normal"
+                                            sx={{ width: '100%' }}
+                                            onChange={(e) => setCourseName(e.target.value)}
+                                        />
+
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <Typography style={{ marginBottom: '-5%' }}>
+                                            Course Type
+                                        </Typography>
+                                        <TextField
+                                            variant="outlined"
+                                            margin="normal"
+                                            select
+                                            SelectProps={{
+                                                value: selectedType,
+                                                onChange: (e) => setSelectedType(e.target.value),
+                                            }}
+                                            sx={{ width: '100%' }}
+                                        >
+                                            {['Practice', 'Relaxing', 'Test', 'Final'].map((week) => (
+                                                <MenuItem key={week} value={week}>
+                                                    {week}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', width: '100%', alignItems: 'flex-start' }}>
+                                    <div style={{ flex: 1, marginRight: '16px' }}>
+                                        <Typography style={{ marginBottom: '-5%' }}>
+                                            Start Date
+                                        </Typography>
+                                        <TextField
+                                            variant="outlined"
+                                            margin="normal"
+                                            type='date'
+                                            value={startDate}
+                                            sx={{ width: '100%' }}
+                                            onChange={(e) => setStartDate(e.target.value)}
+                                        />
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <Typography style={{ marginBottom: '-5%' }}>
+                                            End Date
+                                        </Typography>
+                                        <TextField
+                                            variant="outlined"
+                                            margin="normal"
+                                            type='date'
+                                            value={endDate}
+                                            sx={{ width: '100%' }}
+                                            onChange={(e) => setEndDate(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '3%' }}>
+                                    <Typography variant="body1" gutterBottom>
+                                        Selected Weeks : {selectedWeeks.join(', ')}
+                                    </Typography>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <RadioGroup
+                                        row
+                                        aria-label="week"
+                                        name="week"
+                                        value={selectedWeeks.join('')}
+                                        onChange={(e) => setSelectedWeeks(e.target.value.split('').map(Number))}
+                                    >
+                                        {[1, 2, 3, 4].map((week) => (
+                                            <FormControlLabel
+                                                key={week}
+                                                value={week.toString()}
+                                                control={<Radio sx={{ color: '#4b76db' }} />}
+                                                label={week.toString()}
+                                            />
+                                        ))}
+                                    </RadioGroup>
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleCreateCourse}
+                            >
+                                Create
+                            </Button>
+                        </div>
+                    </DialogContent>
                 </div>
             </Dialog>
         </div>

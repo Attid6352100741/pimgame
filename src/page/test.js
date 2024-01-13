@@ -1,344 +1,502 @@
-import React from 'react';
-import { useState, useEffect, useMemo } from 'react';
-import { Box, Button } from "@mui/material";
+import React, { useEffect, useState } from 'react';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import MenuItem from '@mui/material/MenuItem';
+import { Box, Avatar, DialogTitle, Dialog, Typography, TextField, DialogContent } from "@mui/material";
 import Container from '@mui/material/Container';
 import { useUser } from '../components/UserContext';
 import { useNavigate } from 'react-router-dom';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import AppBarToolbar from '../components/AppBarToolbar';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import LinearProgress from '@mui/material/LinearProgress';
+import AddIcon from '@mui/icons-material/Add';
+import createCoursePicture from '../gif/createcourse.gif'
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import '../style/course.css';
 
-const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-};
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import SendIcon from '@mui/icons-material/Send';
+import HistoryIcon from '@mui/icons-material/History';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
-function Games1() {
+function Course() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
+    const [openDialog, setOpenDialog] = useState(false);
+    const [openCreateDialog, setCreateDialog] = useState(false);
+    const handleClose = () => setOpenDialog(false);
+    const handleCloseCreate = () => setCreateDialog(false);
+    const [testHistory, setTestHistory] = useState([]);
+    const [courseScores, setCourseScores] = useState([]);
+    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedListItem, setSelectedListItem] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [animationBox1, setAnimationBox1] = useState(false);
+    const [animationBox2, setAnimationBox2] = useState(false);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [CourseName, setCourseName] = useState('');
+    const [selectedWeeks, setSelectedWeeks] = useState([]);
+    const [selectedType, setSelectedType] = useState([]);
+    const [countdown] = useState(0.2);
+    const [round, setRound] = useState(0);
+    const [courseData, setCourseData] = useState([]);
+
+    const handleCreateCourse = () => {
+        console.log("CourseName:", CourseName);
+        console.log("selectedWeeks:", selectedWeeks);
+        console.log("selectedType:", selectedType);
+        console.log("startDate:", startDate);
+        console.log("endDate:", endDate);
+
+        if (!CourseName || selectedWeeks.length === 0 || !selectedType || !startDate || !endDate) {
+            setSnackbarMessage('Please fill in all required fields.');
+            setSnackbarOpen(true);
+            return;
+        }
+
+        const storedCourseList = JSON.parse(localStorage.getItem('CourseList')) || [];
+        const maxId = storedCourseList.reduce((max, course) => (course.id > max ? course.id : max), 0);
+
+        const newCourse = {
+            id: maxId + 1,
+            name: CourseName,
+            type: selectedType,
+            startDate,
+            endDate,
+            weeks: selectedWeeks,
+        };
+
+        const updatedCourseList = [...storedCourseList, newCourse];
+        localStorage.setItem('CourseList', JSON.stringify(updatedCourseList));
+
+        setCourseName('');
+        setSelectedWeeks([]);
+        setSelectedType('');
+        setStartDate('');
+        setEndDate('');
+        handleCloseCreate();
+    };
 
     const handleLogout = () => {
         logout();
         navigate('/login');
     };
 
-    const choices1 = useMemo(() => ["on", "like", "his", "dog's"], []);
-    const choices2 = useMemo(() => ["be", "her", "am", "tail"], []);
-    const choices3 = useMemo(() => ["do", "job", "time", "is"], []);
-    const choices4 = useMemo(() => ["black", "work", "but", "im"], []);
-    const [choice1, setChoice1] = useState('');
-    const [choice2, setChoice2] = useState('');
-    const [choice3, setChoice3] = useState('');
-    const [choice4, setChoice4] = useState('');
-    const [testHistory, setTestHistory] = useState([]);
-    const [score, setScore] = useState(0);
-    const [submitted, setSubmitted] = useState(false);
-    const [countdown, setCountdown] = useState(5);
-    const [counting, setCounting] = useState(false);
-    const [round, setRound] = useState(0);
-
-    const [shuffledChoices1, setShuffledChoices1] = useState(shuffleArray(choices1));
-    const [shuffledChoices2, setShuffledChoices2] = useState(shuffleArray(choices2));
-    const [shuffledChoices3, setShuffledChoices3] = useState(shuffleArray(choices3));
-    const [shuffledChoices4, setShuffledChoices4] = useState(shuffleArray(choices4));
-    const [openDialog, setOpenDialog] = React.useState(false);
-
-    const handleChange = (choices, setChoice, setShuffledChoices) => (event) => {
-        const selectedChoice = event.target.value;
-        setShuffledChoices(shuffleArray([...choices]));
-        setChoice((prevChoice) => {
-            localStorage.setItem(`game1Choice1_${user.id}`, prevChoice === choice1 ? selectedChoice : choice1 || '');
-            localStorage.setItem(`game1Choice2_${user.id}`, prevChoice === choice2 ? selectedChoice : choice2 || '');
-            localStorage.setItem(`game1Choice3_${user.id}`, prevChoice === choice3 ? selectedChoice : choice3 || '');
-            localStorage.setItem(`game1Choice4_${user.id}`, prevChoice === choice4 ? selectedChoice : choice4 || '');
-            return selectedChoice;
-        });
-    };
+    useEffect(() => {
+        const storedCourseList = JSON.parse(localStorage.getItem('CourseList')) || [];
+        setCourseData(storedCourseList);
+    }, []);
 
     useEffect(() => {
+        setAnimationBox1(true);
+        setAnimationBox2(true);
+    }, []);
+
+    useEffect(() => {
+        const fetchedScores = [];
         const storedUser = JSON.parse(localStorage.getItem('user'));
-    
+
         if (storedUser) {
-            const userId = storedUser.id;
-    
-            const storedScore = localStorage.getItem(`game1Score_${userId}`);
-            const storedTestHistory = localStorage.getItem(`testHistory_${userId}`);
-            const storedRound = localStorage.getItem(`round_course1_${userId}`);
-    
-            if (storedScore) {
-                setScore(parseInt(storedScore, 10));
+            const { id: userId } = storedUser;
+
+            courseData.forEach((course) => {
+                const storedScore = localStorage.getItem(`game${course.id}Score_${userId}`);
+                const score = storedScore ? parseInt(storedScore, 10) : 0;
+                fetchedScores.push({ id: course.id, score, name: course.name });
+            });
+
+            setCourseScores(fetchedScores);
+
+            if (!selectedCourse) {
+                const defaultCourse = courseData.find((course) => course.name === 'English Verb 1');
+                setSelectedCourse(defaultCourse);
             }
-    
+
+            const storedTestHistory = localStorage.getItem(`testHistory_${userId}`);
             if (storedTestHistory) {
                 setTestHistory(JSON.parse(storedTestHistory));
             }
-    
-            if (storedRound) {
-                setRound(parseInt(storedRound, 10));
-            }
-            
-            if (storedRound && parseInt(storedRound, 10) === 5) {
-                navigate('/course');
-            }
-
-            const storedChoice1 = localStorage.getItem(`game1Choice1_${userId}`);
-            const storedChoice2 = localStorage.getItem(`game1Choice2_${userId}`);
-            const storedChoice3 = localStorage.getItem(`game1Choice3_${userId}`);
-            const storedChoice4 = localStorage.getItem(`game1Choice4_${userId}`);
-
-            if (storedChoice1) {
-                setChoice1(storedChoice1);
-            }
-
-            if (storedChoice2) {
-                setChoice2(storedChoice2);
-            }
-
-            if (storedChoice3) {
-                setChoice3(storedChoice3);
-            }
-
-            if (storedChoice4) {
-                setChoice4(storedChoice4);
-            }
-
-            setShuffledChoices1(shuffleArray(choices1));
-            setShuffledChoices2(shuffleArray(choices2));
-            setShuffledChoices3(shuffleArray(choices3));
-            setShuffledChoices4(shuffleArray(choices4));
         }
-    }, [choices1, choices2, choices3, choices4, navigate, user]);
+    }, [user, navigate, selectedCourse, setTestHistory, courseData]);
 
+    const handleTestButtonClick = (selectedCourse, week) => {
+        const storedRound = parseInt(localStorage.getItem(`round_course${selectedCourse.id}_${user.id}`), 10) || 0;
 
-    const handleClickOpen = () => {
-        setOpenDialog(true);
-    };
-
-    const handleClose = (confirmed) => {
-        setOpenDialog(false);
-
-        if (confirmed) {
-            setSubmitted(true);
-            checkAnswers();
-            ["game1Choice1", "game1Choice2", "game1Choice3", "game1Choice4"].forEach((choiceKey) => {
-                localStorage.removeItem(`${choiceKey}_${user.id}`);
-            });
-
-            handleCountdown();
+        if (selectedCourse && storedRound === 5) {
+            setSnackbarMessage('Your Test Is Limited!');
+            setSnackbarOpen(true);
+        } else {
+            navigate(`/home/course/games/${selectedCourse.id}/week/${week}`);
         }
     };
 
-    const handleSubmit = () => {
-        handleClickOpen();
+
+    const CourseListItem = ({ course }) => {
+        useEffect(() => {
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            if (storedUser) {
+                const userId = storedUser.id;
+                const storedRound = parseInt(localStorage.getItem(`round_course${course.id}_${userId}`), 10) || 0;
+                setRound(storedRound);
+            }
+        }, [course]);
+
+        const handleCourseClick = (course) => {
+            const selectedCourseData = courseData.find((courseData) => courseData.id === course.id);
+            setSelectedCourse({ ...selectedCourseData, weeks: selectedCourseData.weeks });
+            setSelectedListItem(course.id);
+            setRound(parseInt(localStorage.getItem(`round_course${course.id}_${user.id}`), 10) || 0);
+            setAnimationBox2(false);
+            setTimeout(() => {
+                setAnimationBox2(true);
+            }, countdown * 1000);
+        };
+
+        return (
+            <div style={{ minWidth: '200px', marginBottom: '20%' }}>
+                <ListItem key={course.id} button onClick={() => handleCourseClick(course)} selected={selectedListItem === course.id} style={{ borderRadius: '20px', marginBottom: '3%' }}>
+                    <ListItemAvatar>
+                        <Avatar style={{ backgroundColor: 'transparent', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <LibraryBooksIcon style={{ color: '#4b76db' }} />
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={course.name}
+                        secondary={<span style={{ color: course.score >= 10 ? '#28b02b' : 'red' }}>Score: {course.score}/20</span>}
+                    />
+                </ListItem>
+            </div>
+        );
     };
 
-    const checkAnswers = () => {
-        let newScore = 0;
 
-        if (choice1 === "dog's") {
-            newScore += 5;
-        }
-
-        if (choice2 === 'tail') {
-            newScore += 5;
-        }
-
-        if (choice3 === 'is') {
-            newScore += 5;
-        }
-
-        if (choice4 === 'black') {
-            newScore += 5;
-        }
-
-        setScore(newScore);
-
-        const currentDateTime = new Date();
-        const currentDate = currentDateTime.toLocaleDateString('th-TH');
-        const currentTime = currentDateTime.toLocaleTimeString('th-TH');
-    
-        const updatedTestHistory = [
-            ...testHistory,
-            {
-                course: 'English Verb 1',
-                score: newScore,
-                date: currentDate,
-                time: currentTime,
-            },
-        ];
-    
-        setTestHistory(updatedTestHistory);
-    
-        localStorage.removeItem(`game1Score_${user.id}`);
-        localStorage.setItem(`game1Score_${user.id}`, newScore.toString());
-        localStorage.setItem(`testHistory_${user.id}`, JSON.stringify(updatedTestHistory));
-    
-        if (round < 5) {
-            setRound((prevRound) => prevRound + 1);
-            localStorage.setItem(`round_course1_${user.id}`, (round + 1).toString());
-        }
-    };
-
-    const handleCountdown = () => {
-        setCounting(true);
-
-        const countdownInterval = setInterval(() => {
-            setCountdown((prevCountdown) => prevCountdown - 1);
-        }, 1000);
-
-        setTimeout(() => {
-            clearInterval(countdownInterval);
-            setCounting(false);
-            setCountdown(5);
-            navigate('/home/course');
-        }, countdown * 1000);
-    };
+    function TestHistoryTable({ testHistory }) {
+        return (
+            <table style={{ width: '100%' }}>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Course</th>
+                        <th>Score</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {testHistory.map((test, index) => (
+                        <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>{test.course}</td>
+                            <td>{test.score}</td>
+                            <td>{test.date}</td>
+                            <td>{test.time}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        );
+    }
 
     return (
-        <div>
-            <AppBarToolbar user={user} onLogout={handleLogout} testHistory={testHistory} />
-            <Container component="main" maxWidth="xs">
-                <Box
-                    sx={{
-                        marginTop: 5,
-                        padding: "50px",
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        bgcolor: 'background.paper',
-                        borderRadius: "15px",
-                    }}
-                >
-                    <h3 style={{ marginBottom: '10%' }}>English Word Game 1</h3>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'flex-start', marginBottom: '10px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                            <InputLabel id="startText" sx={{ mb: 0 }}>Start Text</InputLabel>
-                            <TextField
-                                id="outlined-basic"
-                                disabled
-                                value="Her"
-                                sx={{ minWidth: 100 }}
-                            />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                            {/* Choice 1 */}
-                            <InputLabel id="choice1" sx={{ mb: 0 }}>Choice 1</InputLabel>
-                            <Select
-                                sx={{ minWidth: 100 }}
-                                labelId="choice1"
-                                id="choice1"
-                                value={choice1}
-                                label="Choice 1"
-                                onChange={handleChange(choices1, setChoice1, setShuffledChoices1)}
-                            >
-                                {shuffledChoices1.map((choice, index) => (
-                                    <MenuItem key={index} value={choice}>{choice}</MenuItem>
-                                ))}
-                            </Select>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                            {/* Choice 2 */}
-                            <InputLabel id="choice2" sx={{ mb: 0 }}>Choice 2</InputLabel>
-                            <Select
-                                sx={{ minWidth: 100 }}
-                                labelId="choice2"
-                                id="choice2"
-                                value={choice2}
-                                label="Choice 2"
-                                onChange={handleChange(choices2, setChoice2, setShuffledChoices2)}
-                            >
-                                {shuffledChoices2.map((choice, index) => (
-                                    <MenuItem key={index} value={choice}>{choice}</MenuItem>
-                                ))}
-                            </Select>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                            {/* Choice 3 */}
-                            <InputLabel id="choice3" sx={{ mb: 0 }}>Choice 3</InputLabel>
-                            <Select
-                                sx={{ minWidth: 100 }}
-                                labelId="choice3"
-                                id="choice3"
-                                value={choice3}
-                                label="Choice 3"
-                                onChange={handleChange(choices3, setChoice3, setShuffledChoices3)}
-                            >
-                                {shuffledChoices3.map((choice, index) => (
-                                    <MenuItem key={index} value={choice}>{choice}</MenuItem>
-                                ))}
-                            </Select>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                            {/* Choice 4 */}
-                            <InputLabel id="choice4" sx={{ mb: 0 }}>Choice 4</InputLabel>
-                            <Select
-                                sx={{ minWidth: 100 }}
-                                labelId="choice4"
-                                id="choice4"
-                                value={choice4}
-                                label="Choice 4"
-                                onChange={handleChange(choices4, setChoice4, setShuffledChoices4)}
-                            >
-                                {shuffledChoices4.map((choice, index) => (
-                                    <MenuItem key={index} value={choice}>{choice}</MenuItem>
-                                ))}
-                            </Select>
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                        <p style={{ color: submitted && score >= 10 ? 'green' : submitted ? 'red' : 'black' }}>
-                            Your Score {score} / 20
-                        </p>
-                        <Button variant="contained" color="primary" onClick={handleSubmit}>
-                            Submit
-                        </Button>
-                    </div>
+        <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column', }}>
+            <AppBarToolbar user={user} onLogout={handleLogout} />
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={5000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert severity="error" onClose={() => setSnackbarOpen(false)}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+            <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }}>
+                    {/* First Box */}
                     <div>
-                        {counting && (
-                            <div style={{ marginTop: '10px' }}>
-                                <p>Back to the main page in {countdown} seconds</p>
+                        <Box
+                            sx={{
+                                marginTop: 5,
+                                padding: "20px",
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                bgcolor: 'background.paper',
+                                borderRadius: "15px",
+                                position: 'relative',
+                                transition: 'transform 0.6s ease-in-out',
+                                transform: animationBox1 ? 'translateY(0%)' : 'translateY(50%)',
+                            }}
+                        >
+                            <h4 style={{}}>Course</h4>
+                            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', borderRadius: "15px" }}>
+                                {courseScores.map((course) => (
+                                    <CourseListItem key={course.id} course={course} />
+                                ))}
+                            </List>
+                            <div style={{ position: 'absolute', bottom: 10, right: 10 }}>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        backgroundColor: '#4b76db',
+                                        borderRadius: '50%',
+                                        width: '40px',
+                                        height: '40px',
+                                        minWidth: 'auto',
+                                        padding: 0,
+                                    }}
+                                    onClick={() => setCreateDialog(true)}
+                                >
+                                    <AddIcon style={{ color: 'white' }} />
+                                </Button>
                             </div>
-                        )}
+                        </Box>
                     </div>
 
+                    {selectedCourse && (
+                        <div style={{ marginTop: '2.2%' }}>
+                            {selectedCourse && selectedCourse.weeks && selectedCourse.weeks.map((week, index) => (
+                                <div key={index} style={{ marginLeft: '1%', minWidth: '50vw' }}>
+                                    <Box
+                                        sx={{
+                                            marginTop: 2,
+                                            padding: "30px",
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            bgcolor: 'background.paper',
+                                            borderRadius: "15px",
+                                            transition: 'transform 0.6s ease-in-out',
+                                            transform: animationBox2 ? 'translateY(0%)' : 'translateY(50%)',
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                <div>
+                                                    <Avatar style={{ backgroundColor: 'transparent', width: '4rem', height: '4rem' }}>
+                                                        <LibraryBooksIcon style={{ color: '#4b76db', width: '3rem', height: '3rem' }} />
+                                                    </Avatar>
+                                                </div>
+                                                <div style={{ marginLeft: '1rem', flex: 1 }}>
+                                                    <h3>Practice {selectedCourse.id} Week {week}</h3>
+                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <RestartAltIcon style={{ marginRight: '5px' }} />
+                                                        <p style={{ margin: '5px', color: 'black', fontSize: '16px' }}>
+                                                            {round}/5
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div style={{}}>
+                                                    <Button
+                                                        variant="contained"
+                                                        endIcon={<HistoryIcon />}
+                                                        style={{ backgroundColor: '#4b76db' }}
+                                                        onClick={() => setOpenDialog(true)}
+                                                    >
+                                                        History
+                                                    </Button>
+                                                    <Button
+                                                        variant="contained"
+                                                        endIcon={<SendIcon />}
+                                                        style={{ backgroundColor: '#4b76db', marginLeft: '15px' }}
+                                                        onClick={() => handleTestButtonClick(selectedCourse, week)}
+                                                    >
+                                                        Test
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            {courseScores.map((course) => {
+                                                if (course.id === selectedCourse.id) {
+                                                    const progress = (course.score / 20) * 100;
+                                                    const progressBarColor = progress < 100 ? '#e3d10e' : '#4caf50';
 
-                    <Dialog
-                        open={openDialog}
-                        onClose={handleClose}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                    >
-                        <DialogTitle id="alert-dialog-title">Confirmation</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText id="alert-dialog-description">
-                                Are you sure you want to submit your answers?
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => handleClose(false)} color="primary">
-                                Cancel
-                            </Button>
-                            <Button onClick={() => handleClose(true)} color="primary" autoFocus>
-                                Confirm
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-
-                </Box>
-
+                                                    return (
+                                                        <div key={course.id} style={{ marginTop: '10px', width: '100%' }}>
+                                                            <LinearProgress
+                                                                variant="determinate"
+                                                                value={progress}
+                                                                sx={{
+                                                                    height: 5,
+                                                                    borderRadius: 5,
+                                                                    marginBottom: '10px',
+                                                                    backgroundColor: '#d3d3d3',
+                                                                    '& .MuiLinearProgress-bar': {
+                                                                        backgroundColor: progressBarColor,
+                                                                    },
+                                                                }}
+                                                            />
+                                                            <Typography variant="caption" color="textSecondary">{`${Math.round(progress)}%`}</Typography>
+                                                        </div>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                        </div>
+                                    </Box>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </Container>
+
+            <Dialog
+                open={openDialog}
+                onClose={() => handleClose(false)}
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '15px',
+                }}
+            >
+                <div>
+                    <DialogTitle sx={{ textAlign: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '-20px' }}>
+                            <p>History English Verb {selectedCourse ? selectedCourse.id : ''}</p>
+                        </div>
+                        <div style={{ border: '1px solid black', padding: '10px', minWidth: '500px', minHeight: '200px' }}>
+                            <TestHistoryTable testHistory={testHistory.filter(test => test.course === selectedCourse?.name)} />
+                        </div>
+                    </DialogTitle>
+                </div>
+            </Dialog>
+
+            <Dialog
+                open={openCreateDialog}
+                onClose={handleCloseCreate}
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '15px',
+                }}
+            >
+                <div>
+                    <DialogTitle sx={{ textAlign: 'center' }}>
+                        <Typography>Create New Course</Typography>
+                    </DialogTitle>
+                    <DialogContent>
+                        <div>
+                            <div
+                                style={{
+                                    backgroundImage: `url(${createCoursePicture})`,
+                                    backgroundSize: 'cover',
+                                    width: '28vw',
+                                    height: '40vh',
+                                }}
+                            ></div>
+                            <div>
+                                <div style={{ display: 'flex', width: '100%', alignItems: 'flex-start' }}>
+                                    <div style={{ flex: 1, marginRight: '16px' }}>
+                                        <Typography style={{ marginBottom: '-5%' }}>
+                                            Course Name
+                                        </Typography>
+                                        <TextField
+                                            variant="outlined"
+                                            margin="normal"
+                                            sx={{ width: '100%' }}
+                                            onChange={(e) => setCourseName(e.target.value)}
+                                        />
+
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <Typography style={{ marginBottom: '-5%' }}>
+                                            Course Type
+                                        </Typography>
+                                        <TextField
+                                            variant="outlined"
+                                            margin="normal"
+                                            select
+                                            SelectProps={{
+                                                value: selectedType,
+                                                onChange: (e) => setSelectedType(e.target.value),
+                                            }}
+                                            sx={{ width: '100%' }}
+                                        >
+                                            {['Practice', 'Relaxing', 'Test', 'Final'].map((week) => (
+                                                <MenuItem key={week} value={week}>
+                                                    {week}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', width: '100%', alignItems: 'flex-start' }}>
+                                    <div style={{ flex: 1, marginRight: '16px' }}>
+                                        <Typography style={{ marginBottom: '-5%' }}>
+                                            Start Date
+                                        </Typography>
+                                        <TextField
+                                            variant="outlined"
+                                            margin="normal"
+                                            type='date'
+                                            value={startDate}
+                                            sx={{ width: '100%' }}
+                                            onChange={(e) => setStartDate(e.target.value)}
+                                        />
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <Typography style={{ marginBottom: '-5%' }}>
+                                            End Date
+                                        </Typography>
+                                        <TextField
+                                            variant="outlined"
+                                            margin="normal"
+                                            type='date'
+                                            value={endDate}
+                                            sx={{ width: '100%' }}
+                                            onChange={(e) => setEndDate(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '3%' }}>
+                                    <Typography variant="body1" gutterBottom>
+                                        Select Week:
+                                    </Typography>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <RadioGroup
+                                        row
+                                        aria-label="week"
+                                        name="week"
+                                        value={selectedWeeks}
+                                        onChange={(e) => setSelectedWeeks(e.target.value)}
+                                    >
+                                        {['1', '2', '3', '4'].map((week) => (
+                                            <FormControlLabel
+                                                key={week}
+                                                value={week}
+                                                control={<Radio sx={{ color: '#4b76db' }} />}
+                                                label={week}
+                                            />
+                                        ))}
+                                    </RadioGroup>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleCreateCourse}
+                            >
+                                Create
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </div>
+            </Dialog>
         </div>
     );
 }
 
-export default Games1;
+export default Course;
