@@ -335,7 +335,6 @@ function Course() {
                                             width: '40px',
                                             height: '40px',
                                             minWidth: 'auto',
-                                            padding: 0,
                                         }}
                                         onClick={() => setCreateDialog(true)}
                                     >

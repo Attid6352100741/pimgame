@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MenuItem from '@mui/material/MenuItem';
-import { Box, DialogTitle, Typography, TextField, DialogContent } from "@mui/material";
+import { Box, DialogTitle, Typography, TextField } from "@mui/material";
 import Container from '@mui/material/Container';
 import { useUser } from '../components/UserContext';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,23 +13,54 @@ import Radio from '@mui/material/Radio';
 import '../style/course.css';
 
 function Courstsetting() {
-
     const { user, logout } = useUser();
     const navigate = useNavigate();
-    const [animationBox1] = useState(false);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const [setCourseName] = useState('');
     const [selectedWeeks, setSelectedWeeks] = useState([]);
-    const [selectedType, setSelectedType] = useState([]);
     const { courseId } = useParams();
+    const [loading, setLoading] = useState(true);
 
-
+    const [courseData, setCourseData] = useState({
+        courseName: '',
+        courseType: '',
+        startDate: '',
+        endDate: '',
+        selectedWeeks: [],
+    });
 
     const handleLogout = () => {
         logout();
         navigate('/login');
     };
+
+    const handleUpdate = () => {
+        const courseList = JSON.parse(localStorage.getItem('CourseList')) || {};
+        courseList[courseId] = courseData;
+        localStorage.setItem('CourseList', JSON.stringify(courseList));
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const courseList = JSON.parse(localStorage.getItem('CourseList')) || {};
+            console.log('CourseList from localStorage:', courseList);
+
+            const courseIdNumber = parseInt(courseId, 10);
+            const courseData = courseList[courseIdNumber] || { courseName: '', courseType: '', startDate: '', endDate: '', selectedWeeks: [] };
+            console.log(`CourseData for courseId ${courseId}:`, courseData);
+
+            setCourseData(courseData);
+            setStartDate(courseData.startDate || '');
+            setEndDate(courseData.endDate || '');
+            setSelectedWeeks(courseData.selectedWeeks || []);
+            setLoading(false);
+        };
+
+        fetchData();
+    }, [courseId]);
+    
+    
+
 
     return (
         <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column', }}>
@@ -69,9 +100,9 @@ function Courstsetting() {
                                             variant="outlined"
                                             margin="normal"
                                             sx={{ width: '100%' }}
-                                            onChange={(e) => setCourseName(e.target.value)}
+                                            value={courseData.courseName}
+                                            onChange={(e) => setCourseData({ ...courseData, courseName: e.target.value })}
                                         />
-
                                     </div>
                                     <div style={{ flex: 1 }}>
                                         <Typography style={{ marginBottom: '-5%' }}>
@@ -82,8 +113,8 @@ function Courstsetting() {
                                             margin="normal"
                                             select
                                             SelectProps={{
-                                                value: selectedType,
-                                                onChange: (e) => setSelectedType(e.target.value),
+                                                value: courseData.courseType,
+                                                onChange: (e) => setCourseData({ ...courseData, courseType: e.target.value }),
                                             }}
                                             sx={{ width: '100%' }}
                                         >
@@ -148,10 +179,7 @@ function Courstsetting() {
                                 </div>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                >
+                                <Button variant="contained" color="primary" onClick={handleUpdate}>
                                     Update
                                 </Button>
                             </div>
