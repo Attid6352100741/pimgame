@@ -9,8 +9,6 @@ import systempicture from '../gif/system.gif'
 import coursepicture from '../gif/course.gif'
 import gamespicture from '../gif/games.gif'
 
-import '../style/home.css';
-
 function Home() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
@@ -39,12 +37,11 @@ function Home() {
     return (
         <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
-            <Container className="responsive-container" component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ marginTop: 5, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }}>
                     {/* First Box */}
                     <div>
                         <Box
-                            className="responsive-box"
                             sx={{
                                 marginTop: 5,
                                 marginRight: '10px',
@@ -55,6 +52,8 @@ function Home() {
                                 alignItems: 'center',
                                 bgcolor: 'background.paper',
                                 borderRadius: "15px",
+                                width: '20vw',
+                                height: '30vh',
                                 transition: 'transform .7s ease-in-out',
                                 transform: openDialog ? 'translateY(+70px)' : 'translateY(-150)',
                             }}
@@ -62,8 +61,8 @@ function Home() {
                             <div style={{
                                 backgroundImage: `url(${coursepicture})`,
                                 backgroundSize: 'contain',
-                                width: '330px',
-                                height: '250px',
+                                width: '20vw',
+                                height: '30vh',
                             }}>
                             </div>
                             <div>
@@ -75,7 +74,6 @@ function Home() {
                     {/* Second Box */}
                     <div>
                         <Box
-                            className="responsive-box"
                             sx={{
                                 marginTop: 5,
                                 marginRight: '10px',
@@ -86,6 +84,8 @@ function Home() {
                                 alignItems: 'center',
                                 bgcolor: 'background.paper',
                                 borderRadius: "15px",
+                                width: '20vw',
+                                height: '30vh',
                                 transition: 'transform 1s ease-in-out',
                                 transform: openDialog ? 'translateY(+70px)' : 'translateY(-120)',
                             }}
@@ -93,11 +93,8 @@ function Home() {
                             <div style={{
                                 backgroundImage: `url(${gamespicture})`,
                                 backgroundSize: 'contain',
-                                width: '350px',
-                                height: '250px',
-                                margin: '0px',
-                                padding: '0px',
-                                overflowY: 'auto',
+                                width: '20vw',
+                                height: '30vh',
                             }}>
                             </div>
                             <div>
@@ -110,7 +107,6 @@ function Home() {
                     {isStudent ? null : (
                         <div>
                             <Box
-                                className="responsive-box"
                                 sx={{
                                     marginTop: 5,
                                     marginRight: '10px',
@@ -121,6 +117,8 @@ function Home() {
                                     alignItems: 'center',
                                     bgcolor: 'background.paper',
                                     borderRadius: "15px",
+                                    width: '20vw',
+                                    height: '30vh',
                                     transition: 'transform 0.4s ease-in-out',
                                     transform: openDialog ? 'translateY(+70px)' : 'translateY(-150)',
                                 }}
@@ -128,11 +126,8 @@ function Home() {
                                 <div style={{
                                     backgroundImage: `url(${systempicture})`,
                                     backgroundSize: 'cover',
-                                    width: '250px',
-                                    height: '250px',
-                                    margin: '0px',
-                                    padding: '0px',
-                                    overflowY: 'auto',
+                                    width: '20vw',
+                                    height: '30vh',
                                 }}>
                                 </div>
                                 <div>
@@ -145,7 +140,6 @@ function Home() {
             </Container>
         </div>
     );
-
 
 }
 
