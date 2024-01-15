@@ -1,0 +1,13 @@
+@media only screen and (max-width: 600px) {
+    /* ปรับสไตล์ที่นี่สำหรับขนาดหน้าจอที่มีความกว้างไม่เกิน 600px */
+    .responsive-container.MuiContainer-maxWidthXs {
+      max-width: 100% !important; /* ปรับขนาดของ Container */
+    }
+  
+    /* ปรับขนาดของรูปภาพในแต่ละกล่อง */
+    .responsive-box.MuiBox-root {
+      width: 100%;
+      height: auto;
+    }
+  }
+  
