@@ -66,7 +66,7 @@ function Home() {
                             }}>
                             </div>
                             <div>
-                                <Button variant="contained" onClick={handleTestRacing}>Test Racing</Button>
+                                <Button variant="contained" onClick={handleTestRacing}>Racing</Button>
                             </div>
                         </Box>
                     </div>
