@@ -40,42 +40,9 @@ function Home() {
         <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
             <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                     {/* First Box */}
-                    {isStudent ? null : (
-                        <div>
-                            <Box
-                                sx={{
-                                    marginTop: 5,
-                                    marginRight: '10px',
-                                    padding: "20px",
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    bgcolor: 'background.paper',
-                                    borderRadius: "15px",
-                                    transition: 'transform 0.4s ease-in-out',
-                                    transform: openDialog ? 'translateY(+70px)' : 'translateY(-150)',
-                                }}
-                            >
-                                <div style={{
-                                    backgroundImage: `url(${systempicture})`,
-                                    backgroundSize: 'cover',
-                                    width: '250px',
-                                    height: '250px',
-                                    margin: '0px',
-                                    padding: '0px',
-                                    overflowY: 'auto',
-                                }}>
-                                </div>
-                                <div>
-                                    <Button variant="contained">Setting</Button>
-                                </div>
-                            </Box>
-                        </div>
-                    )}
-                    {/* Second Box */}
-                    <div>
+                    <div style={{ flex: '1 0 100%', maxWidth: '330px' }}>
                         <Box
                             sx={{
                                 marginTop: 5,
@@ -93,8 +60,8 @@ function Home() {
                             <div style={{
                                 backgroundImage: `url(${coursepicture})`,
                                 backgroundSize: 'contain',
-                                width: '330px',
-                                height: '250px',
+                                width: '100%',
+                                height: '150px',
                             }}>
                             </div>
                             <div>
@@ -103,8 +70,8 @@ function Home() {
                         </Box>
                     </div>
 
-                    {/* Third Box */}
-                    <div>
+                    {/* Second Box */}
+                    <div style={{ flex: '1 0 100%', maxWidth: '350px' }}>
                         <Box
                             sx={{
                                 marginTop: 5,
@@ -122,8 +89,8 @@ function Home() {
                             <div style={{
                                 backgroundImage: `url(${gamespicture})`,
                                 backgroundSize: 'contain',
-                                width: '350px',
-                                height: '250px',
+                                width: '100%',
+                                height: '150px',
                                 margin: '0px',
                                 padding: '0px',
                                 overflowY: 'auto',
@@ -134,6 +101,39 @@ function Home() {
                             </div>
                         </Box>
                     </div>
+                    {/* Third Box */}
+                    {isStudent ? null : (
+                        <div style={{ flex: '1 0 100%', maxWidth: '250px' }}>
+                            <Box
+                                sx={{
+                                    marginTop: 5,
+                                    marginRight: '10px',
+                                    padding: "20px",
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    bgcolor: 'background.paper',
+                                    borderRadius: "15px",
+                                    transition: 'transform 0.4s ease-in-out',
+                                    transform: openDialog ? 'translateY(+70px)' : 'translateY(-150)',
+                                }}
+                            >
+                                <div style={{
+                                    backgroundImage: `url(${systempicture})`,
+                                    backgroundSize: 'cover',
+                                    width: '100%',
+                                    height: '150px',
+                                    margin: '0px',
+                                    padding: '0px',
+                                    overflowY: 'auto',
+                                }}>
+                                </div>
+                                <div>
+                                    <Button variant="contained">Setting</Button>
+                                </div>
+                            </Box>
+                        </div>
+                    )}
                 </div>
             </Container>
         </div>
