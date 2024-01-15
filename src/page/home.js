@@ -40,9 +40,9 @@ function Home() {
         <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
             <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }}>
                     {/* First Box */}
-                    <div style={{ flex: '1 0 100%', maxWidth: '330px' }}>
+                    <div>
                         <Box
                             sx={{
                                 marginTop: 5,
@@ -60,8 +60,8 @@ function Home() {
                             <div style={{
                                 backgroundImage: `url(${coursepicture})`,
                                 backgroundSize: 'contain',
-                                width: '100%',
-                                height: '150px',
+                                width: '330px',
+                                height: '250px',
                             }}>
                             </div>
                             <div>
@@ -71,7 +71,7 @@ function Home() {
                     </div>
 
                     {/* Second Box */}
-                    <div style={{ flex: '1 0 100%', maxWidth: '350px' }}>
+                    <div>
                         <Box
                             sx={{
                                 marginTop: 5,
@@ -89,8 +89,8 @@ function Home() {
                             <div style={{
                                 backgroundImage: `url(${gamespicture})`,
                                 backgroundSize: 'contain',
-                                width: '100%',
-                                height: '150px',
+                                width: '350px',
+                                height: '250px',
                                 margin: '0px',
                                 padding: '0px',
                                 overflowY: 'auto',
@@ -103,7 +103,7 @@ function Home() {
                     </div>
                     {/* Third Box */}
                     {isStudent ? null : (
-                        <div style={{ flex: '1 0 100%', maxWidth: '250px' }}>
+                        <div>
                             <Box
                                 sx={{
                                     marginTop: 5,
@@ -121,8 +121,8 @@ function Home() {
                                 <div style={{
                                     backgroundImage: `url(${systempicture})`,
                                     backgroundSize: 'cover',
-                                    width: '100%',
-                                    height: '150px',
+                                    width: '250px',
+                                    height: '250px',
                                     margin: '0px',
                                     padding: '0px',
                                     overflowY: 'auto',
