@@ -104,14 +104,6 @@ const AppBarToolbar = ({ user: propUser }) => {
                         <Typography variant="h6" component="div" sx={{ marginLeft: 1 }}>
                             {user.username}
                         </Typography>
-                        <div>
-                            <Typography component="div" sx={{ marginLeft: 1 }}>
-                                Contract
-                            </Typography>
-                            <Typography component="div" sx={{ marginLeft: 1 }}>
-                                About
-                            </Typography>
-                        </div>
                     </div>
                     <div>
                         <IconButton color="inherit" onClick={handleMenuOpen}>

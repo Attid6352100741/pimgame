@@ -9,8 +9,6 @@ import systempicture from '../gif/system.gif'
 import coursepicture from '../gif/course.gif'
 import gamespicture from '../gif/games.gif'
 
-import '../style/home.css';
-
 function Home() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
@@ -40,7 +38,7 @@ function Home() {
         <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
             <Container component="main" maxWidth="xs" className="container">
-                <div className="responsive-container">
+                <div className="responsive-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                     {/* First Box */}
                     <div>
                         <Box
@@ -56,7 +54,7 @@ function Home() {
                                 borderRadius: "15px",
                                 width: '20vw',
                                 height: '35vh',
-                                transition: 'transform .7s ease-in-out',
+                                transition: 'transform 1s ease-in-out',
                             }}
                         >
                             <div style={{
@@ -67,7 +65,7 @@ function Home() {
                             }}>
                             </div>
                             <div>
-                                <Button variant="contained" onClick={handleTestRacing} sx={{ width: '8vw', marginTop: '10%' }}>Racing</Button>
+                                <Button variant="contained" sx={{ width: '8vw', marginTop: '10%' }}>Racing</Button>
                             </div>
                         </Box>
                     </div>
@@ -87,7 +85,7 @@ function Home() {
                                 borderRadius: "15px",
                                 width: '20vw',
                                 height: '35vh',
-                                transition: 'transform 1s ease-in-out',
+                                transition: 'transform 1s ease-in-out', // Set the same duration for all boxes
                             }}
                         >
                             <div style={{
@@ -119,13 +117,13 @@ function Home() {
                                     borderRadius: "15px",
                                     width: '20vw',
                                     height: '35vh',
-                                    transition: 'transform 0.4s ease-in-out',
+                                    transition: 'transform 1s ease-in-out',
                                 }}
                             >
                                 <div style={{
                                     backgroundImage: `url(${systempicture})`,
                                     backgroundSize: 'cover',
-                                    width: '20vw',
+                                    width: '15vw',
                                     height: '30vh',
                                 }}>
                                 </div>
@@ -140,4 +138,5 @@ function Home() {
         </div>
     );
 }
+
 export default Home;

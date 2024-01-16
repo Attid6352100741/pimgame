@@ -24,6 +24,8 @@ const shuffleArray = (array) => {
 };
 
 function Games1() {
+    const [answersConfirmed, setAnswersConfirmed] = useState(false);
+    const [gameTitle, setGameTitle] = useState("English Word Game 1");
     const { user, logout } = useUser();
     const navigate = useNavigate();
 
@@ -45,7 +47,6 @@ function Games1() {
     const [testHistory, setTestHistory] = useState([]);
     const [score, setScore] = useState(0);
     const [submitted, setSubmitted] = useState(false);
-    const [countdown, setCountdown] = useState(5);
     const [counting, setCounting] = useState(false);
     const [round, setRound] = useState(0);
 
@@ -69,26 +70,26 @@ function Games1() {
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
-    
+
         if (storedUser) {
             const userId = storedUser.id;
-    
+
             const storedScore = localStorage.getItem(`game1Score_${userId}`);
             const storedTestHistory = localStorage.getItem(`testHistory_${userId}`);
             const storedRound = localStorage.getItem(`round_course1_${userId}`);
-    
+
             if (storedScore) {
                 setScore(parseInt(storedScore, 10));
             }
-    
+
             if (storedTestHistory) {
                 setTestHistory(JSON.parse(storedTestHistory));
             }
-    
+
             if (storedRound) {
                 setRound(parseInt(storedRound, 10));
             }
-            
+
             if (storedRound && parseInt(storedRound, 10) === 5) {
                 navigate('/course');
             }
@@ -126,6 +127,24 @@ function Games1() {
         setOpenDialog(true);
     };
 
+    const handleNextpage = () => {
+        if (answersConfirmed) {
+            setScore(0);
+    
+            setChoice1('');
+            setChoice2('');
+            setChoice3('');
+            setChoice4('');
+    
+            navigate(`/home/course/games/1/week/2`);
+            setGameTitle(`English Word Game ${round + 1}`);
+            setAnswersConfirmed(false);
+        } else {
+            alert("Please confirm your answers before proceeding.");
+        }
+    };
+    
+
     const handleClose = (confirmed) => {
         setOpenDialog(false);
 
@@ -137,6 +156,7 @@ function Games1() {
             });
 
             handleCountdown();
+            setAnswersConfirmed(true);
         }
     };
 
@@ -168,7 +188,7 @@ function Games1() {
         const currentDateTime = new Date();
         const currentDate = currentDateTime.toLocaleDateString('th-TH');
         const currentTime = currentDateTime.toLocaleTimeString('th-TH');
-    
+
         const updatedTestHistory = [
             ...testHistory,
             {
@@ -178,13 +198,13 @@ function Games1() {
                 time: currentTime,
             },
         ];
-    
+
         setTestHistory(updatedTestHistory);
-    
+
         localStorage.removeItem(`game1Score_${user.id}`);
         localStorage.setItem(`game1Score_${user.id}`, newScore.toString());
         localStorage.setItem(`testHistory_${user.id}`, JSON.stringify(updatedTestHistory));
-    
+
         if (round < 5) {
             setRound((prevRound) => prevRound + 1);
             localStorage.setItem(`round_course1_${user.id}`, (round + 1).toString());
@@ -193,21 +213,10 @@ function Games1() {
 
     const handleCountdown = () => {
         setCounting(true);
-
-        const countdownInterval = setInterval(() => {
-            setCountdown((prevCountdown) => prevCountdown - 1);
-        }, 1000);
-
-        setTimeout(() => {
-            clearInterval(countdownInterval);
-            setCounting(false);
-            setCountdown(5);
-            navigate('/home/course');
-        }, countdown * 1000);
     };
 
     return (
-        <div style={{backgroundColor: '#b9dff4' , minHeight: '100vh',}}>
+        <div style={{ backgroundColor: '#b9dff4', minHeight: '100vh', }}>
             <AppBarToolbar user={user} onLogout={handleLogout} testHistory={testHistory} />
             <Container component="main" maxWidth="md">
                 <Box
@@ -221,7 +230,7 @@ function Games1() {
                         borderRadius: "15px",
                     }}
                 >
-                    <h3 style={{ marginBottom: '10%' }}>English Word Game 1</h3>
+                    <h3 style={{ marginBottom: '10%' }}>{gameTitle}</h3>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'flex-start', marginBottom: '10px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                             <InputLabel id="startText" sx={{ mb: 0 }}>Start Text</InputLabel>
@@ -305,12 +314,10 @@ function Games1() {
                             Submit
                         </Button>
                     </div>
-                    <div>
-                        {counting && (
-                            <div style={{ marginTop: '10px' }}>
-                                <p>Back to the main page in {countdown} seconds</p>
-                            </div>
-                        )}
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, marginTop: '5%', justifyContent: 'flex-end', marginLeft: 'auto' }}>
+                        <Button variant="contained" color="success" onClick={handleNextpage} disabled={!answersConfirmed}>
+                            Next Page
+                        </Button>
                     </div>
 
 

@@ -27,6 +27,10 @@ import SendIcon from '@mui/icons-material/Send';
 import HistoryIcon from '@mui/icons-material/History';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AddHomeIcon from '@mui/icons-material/AddHome';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
+import QuizIcon from '@mui/icons-material/Quiz';
 
 function Course() {
     const { user, logout } = useUser();
@@ -52,6 +56,13 @@ function Course() {
     const [round, setRound] = useState(0);
     const [courseData, setCourseData] = useState([]);
     const isStudent = user && user.roll === 'Student';
+
+    const typeIcons = {
+        'Practice': <MenuBookIcon style={{ color: '#75b023', width: '25px', height: 'auto' }} />,
+        'Relaxing': <AddHomeIcon style={{ color: '#25c0db', width: '25px', height: 'auto' }} />,
+        'Test': <BookmarkAddedIcon style={{ color: '#ebbd17', width: '25px', height: 'auto' }} />,
+        'Final': <QuizIcon style={{ color: '#eb7e17', width: '25px', height: 'auto' }} />,
+      };
 
     const handleCreateCourse = () => {
         console.log("CourseName:", CourseName);
@@ -372,9 +383,9 @@ function Course() {
                                                 <div style={{ marginLeft: '1rem', flex: 1 }}>
                                                     <h3>{selectedCourse.name} Week : {week}</h3>
                                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                        <RestartAltIcon style={{ marginRight: '5px' }} />
+                                                        {typeIcons[selectedCourse.type] || <RestartAltIcon style={{ marginRight: '5px' }} />}
                                                         <p style={{ margin: '5px', color: 'black', fontSize: '16px' }}>
-                                                            {round}/5
+                                                            {selectedCourse.type}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -446,7 +457,7 @@ function Course() {
                 <div>
                     <DialogTitle sx={{ textAlign: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '-20px' }}>
-                            <p>History English Verb {selectedCourse ? selectedCourse.id : ''}</p>
+                            <p>Course : {selectedCourse?.name}</p>
                         </div>
                         <div style={{ border: '1px solid black', padding: '10px', minWidth: '500px', minHeight: '200px' }}>
                             <TestHistoryTable testHistory={testHistory.filter(test => test.course === selectedCourse?.name)} />
