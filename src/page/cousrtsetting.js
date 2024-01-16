@@ -6,7 +6,7 @@ import { useUser } from '../components/UserContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import AppBarToolbar from '../components/AppBarToolbar';
 import Button from '@mui/material/Button';
-import createCoursePicture from '../gif/createcourse.gif'
+import createCoursePicture from '../gif/setting.gif'
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
@@ -78,7 +78,7 @@ function Courstsetting() {
                                 alignItems: 'center',
                                 bgcolor: 'background.paper',
                                 borderRadius: "15px",
-                                position: 'relative',
+                                position: 'relative',                
                             }}
                         >
                             <h3>Setting Course : {courseId}</h3>
@@ -86,7 +86,7 @@ function Courstsetting() {
                                 style={{
                                     backgroundImage: `url(${createCoursePicture})`,
                                     backgroundSize: 'cover',
-                                    width: '28vw',
+                                    width: '20vw',
                                     height: '40vh',
                                 }}
                             ></div>
