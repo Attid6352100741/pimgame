@@ -1,14 +1,26 @@
 body {
-    font-size: 14px;
+  font-size: 14px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+}
+
+.box {
+  min-width: 13vw;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 600px) {
+  /* ปรับขนาดของ box เมื่อหน้าจอเล็กกว่า 600px */
+  .container {
+      grid-template-columns: 1fr;
   }
-  
-  div.mini-box {
-    min-width: 13vw;
-  }
-  
-  @media only screen and (max-width: 600px) {
-    div.mini-box {
-      min-width: 100%;
-    }
-  }
-  
+}

@@ -9,6 +9,8 @@ import systempicture from '../gif/system.gif'
 import coursepicture from '../gif/course.gif'
 import gamespicture from '../gif/games.gif'
 
+import '../style/home.css';
+
 function Home() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
@@ -35,10 +37,10 @@ function Home() {
     }, []);
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
-            <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }}>
+            <Container component="main" maxWidth="xs" className="container">
+                <div className="responsive-container">
                     {/* First Box */}
                     <div>
                         <Box
@@ -53,9 +55,8 @@ function Home() {
                                 bgcolor: 'background.paper',
                                 borderRadius: "15px",
                                 width: '20vw',
-                                height: '30vh',
+                                height: '35vh',
                                 transition: 'transform .7s ease-in-out',
-                                transform: openDialog ? 'translateY(+70px)' : 'translateY(-150)',
                             }}
                         >
                             <div style={{
@@ -66,7 +67,7 @@ function Home() {
                             }}>
                             </div>
                             <div>
-                                <Button variant="contained" onClick={handleTestRacing}>Racing</Button>
+                                <Button variant="contained" onClick={handleTestRacing} sx={{ width: '8vw', marginTop: '10%' }}>Racing</Button>
                             </div>
                         </Box>
                     </div>
@@ -85,9 +86,8 @@ function Home() {
                                 bgcolor: 'background.paper',
                                 borderRadius: "15px",
                                 width: '20vw',
-                                height: '30vh',
+                                height: '35vh',
                                 transition: 'transform 1s ease-in-out',
-                                transform: openDialog ? 'translateY(+70px)' : 'translateY(-120)',
                             }}
                         >
                             <div style={{
@@ -98,7 +98,7 @@ function Home() {
                             }}>
                             </div>
                             <div>
-                                <Button variant="contained" onClick={handleCourse}>Course</Button>
+                                <Button variant="contained" onClick={handleCourse} sx={{ width: '8vw', marginTop: '10%' }}>Course</Button>
                             </div>
                         </Box>
                     </div>
@@ -118,9 +118,8 @@ function Home() {
                                     bgcolor: 'background.paper',
                                     borderRadius: "15px",
                                     width: '20vw',
-                                    height: '30vh',
+                                    height: '35vh',
                                     transition: 'transform 0.4s ease-in-out',
-                                    transform: openDialog ? 'translateY(+70px)' : 'translateY(-150)',
                                 }}
                             >
                                 <div style={{
@@ -131,7 +130,7 @@ function Home() {
                                 }}>
                                 </div>
                                 <div>
-                                    <Button variant="contained">Setting</Button>
+                                    <Button variant="contained" sx={{ width: '8vw', marginTop: '10%' }}>Setting</Button>
                                 </div>
                             </Box>
                         </div>
@@ -140,7 +139,5 @@ function Home() {
             </Container>
         </div>
     );
-
 }
-
 export default Home;

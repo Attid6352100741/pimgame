@@ -41,19 +41,19 @@ const AppBarToolbar = ({ user: propUser }) => {
             { id: 3, name: 'English Verb 3' },
             { id: 4, name: 'English Verb 4' },
         ];
-    
+
         courseData.forEach((course) => {
             localStorage.removeItem(`game${course.id}Score_${user.id}`);
             localStorage.removeItem(`round_course${course.id}_${user.id}`);
         });
-    
+
         localStorage.removeItem(`testHistory_${user.id}`);
         setTestHistory([]);
         handleClose();
         handleClickOpen();
         window.location.reload();
     };
-    
+
 
     useEffect(() => {
         const storedTestHistory = JSON.parse(localStorage.getItem(`testHistory_${user?.id || ''}`));
@@ -70,14 +70,14 @@ const AppBarToolbar = ({ user: propUser }) => {
 
     const handleLogout = () => {
         localStorage.removeItem('user', JSON.stringify);
-      };
-      
+    };
+
 
     return (
         <>
             <AppBar position="static">
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: '75px', bgcolor: '#51ade0' }}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <label>
                             <IconButton
                                 sx={{ m: 1, bgcolor: isHovered ? '#1F81FE' : 'primary.main', ':hover': { bgcolor: '#1F81FE' }, cursor: 'pointer' }}
@@ -104,6 +104,14 @@ const AppBarToolbar = ({ user: propUser }) => {
                         <Typography variant="h6" component="div" sx={{ marginLeft: 1 }}>
                             {user.username}
                         </Typography>
+                        <div>
+                            <Typography component="div" sx={{ marginLeft: 1 }}>
+                                Contract
+                            </Typography>
+                            <Typography component="div" sx={{ marginLeft: 1 }}>
+                                About
+                            </Typography>
+                        </div>
                     </div>
                     <div>
                         <IconButton color="inherit" onClick={handleMenuOpen}>
