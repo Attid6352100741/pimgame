@@ -6,6 +6,7 @@ import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import loginBackground from '../img/login.jpg';
+import { Link } from 'react-router-dom';
 import '../style/login.css';
 
 function Login() {
@@ -29,20 +30,12 @@ function Login() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const testUsers = [
-      { id: '1', username: 'Raccoon', password: '123', firstname: 'Micheal', lastname: 'Johansan', personid: '6852100741' , roll:'Student'},
-      { id: '2', username: 'Cat', password: '123', firstname: 'Steven', lastname: 'Blackburgur', personid: '6852100732' , roll:'Teacher'},
-      { id: '3', username: 'Dog', password: '123', firstname: 'Jonathan', lastname: 'Bermington', personid: '6852100748' , roll:'Student'},
-    ];
+    const userList = JSON.parse(localStorage.getItem('UserList')) || [];
 
-    const lowerCaseUsername = username.toLowerCase();
-    const lowerCasePassword = password.toLowerCase();
-
-    const user = testUsers.find((u) => u.username.toLowerCase() === lowerCaseUsername && u.password === lowerCasePassword);
+    const user = userList.find((u) => u.studentId === username && u.password === password);
 
     if (user) {
-      login(user.id, user.username, user.firstname, user.lastname, user.personid , user.roll);
-
+      login(user.id, user.studentId, user.firstname, user.lastname, user.role);
       setLoginStatus('success');
       console.log('Login Success');
       console.log('User', user);
@@ -51,9 +44,10 @@ function Login() {
       }, 1000);
     } else {
       setLoginStatus('error');
-      console.log('Username or Password Incorrect');
+      console.log('StudentID or Password Incorrect');
     }
   };
+
 
   return (
     <div className='main-content' style={{
@@ -70,7 +64,7 @@ function Login() {
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
-            padding: "20px",
+            padding: "10%",
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -116,6 +110,14 @@ function Login() {
               Login
             </Button>
           </Box>
+          <div>
+            <Typography variant="body2">
+              Don't have an account?
+              <Link to="/register" style={{ textDecoration: 'underline', marginLeft: '4px' }}>
+                Register here
+              </Link>
+            </Typography>
+          </div>
           <Box style={{ textAlign: 'center', marginTop: '10px' }}>
             {loginStatus === 'success' && (
               <div style={{ color: 'green', marginBottom: '10px' }}>

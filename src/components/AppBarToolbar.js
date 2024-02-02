@@ -1,11 +1,20 @@
+//SYSTEM
 import React, { useState, useRef, useEffect } from 'react';
 import { AppBar, Toolbar, IconButton, Typography, Avatar, Dialog, DialogTitle, Button, Menu, MenuItem } from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Link } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
+
+//ICON
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import PersonIcon from '@mui/icons-material/Person';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
 const AppBarToolbar = ({ user: propUser }) => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -102,7 +111,7 @@ const AppBarToolbar = ({ user: propUser }) => {
                             />
                         </label>
                         <Typography variant="h6" component="div" sx={{ marginLeft: 1 }}>
-                            {user.username}
+                            Hello! Welcome [ {user.firstname} {user.lastname} ]
                         </Typography>
                     </div>
                     <div>
@@ -117,13 +126,23 @@ const AppBarToolbar = ({ user: propUser }) => {
                             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                         >
                             <MenuItem component={Link} to="/home" onClick={handleMenuClose}>
-                                Home
+                                <ListItemIcon>
+                                    <HomeOutlinedIcon fontSize="medium" />
+                                </ListItemIcon>
+                                <ListItemText> Home</ListItemText>
                             </MenuItem>
                             <MenuItem onClick={() => { handleMenuClose(); handleClickOpen(); }}>
-                                Profile
+                                <ListItemIcon>
+                                    <AssignmentIndOutlinedIcon fontSize="medium" />
+                                </ListItemIcon>
+                                <ListItemText>Profile</ListItemText>
                             </MenuItem>
+                            <Divider />
                             <MenuItem component={Link} to="/login" onClick={handleLogout}>
-                                Logout
+                                <ListItemIcon>
+                                    <LogoutOutlinedIcon fontSize="medium" />
+                                </ListItemIcon>
+                                <ListItemText>Logout</ListItemText>
                             </MenuItem>
                         </Menu>
                     </div>

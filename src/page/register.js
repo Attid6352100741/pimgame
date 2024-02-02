@@ -1,24 +1,44 @@
-import { Button, Typography, Avatar, Box } from "@mui/material";
-import React, { useState } from 'react';
+import { Button, Typography, Avatar, Box, Alert, Snackbar } from "@mui/material";
+import React, { useState, useMemo } from 'react';
 import { useUser } from '../components/UserContext';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import Autocomplete from '@mui/material/Autocomplete';
 import loginBackground from '../img/login.jpg';
 import '../style/login.css';
 
 function Register() {
-  const [username, setUsername] = useState('');
+  const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
-  const [loginStatus, setLoginStatus] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [role, setRole] = useState('');
+  const roleList = useMemo(() => ["Teacher", "Student"], []);
+  const [errorAlert, setErrorAlert] = useState('');
+  const [registerSuccess, setRegisterSuccess] = useState(false);
 
-  const navigate = useNavigate();
-  const { login } = useUser();
+  const handleCloseSnackbar = () => {
+    setRegisterSuccess(false);
+  };
 
-  const handleUsernameChange = (event) => {
-    const newUsername = event.target.value;
-    setUsername(newUsername);
+  const handleFirstnameChange = (event) => {
+    const newFirstname = event.target.value;
+    setFirstname(newFirstname);
+  };
+
+  const handleLastnameChange = (event) => {
+    const newLastname = event.target.value;
+    setLastname(newLastname);
+  };
+
+  const handleRoleChange = (event, newValue) => {
+    if (newValue) {
+      setRole(newValue);
+    }
   };
 
   const handlePasswordChange = (event) => {
@@ -26,34 +46,93 @@ function Register() {
     setPassword(newPassword);
   };
 
+  const handleConfirmPasswordChange = (event) => {
+    const newConfirmPassword = event.target.value;
+    setConfirmPassword(newConfirmPassword);
+  };
+
+  const handleEmailChange = (event) => {
+    const newEmail = event.target.value;
+    setEmail(newEmail);
+  };
+
+  const handleCloseAlert = () => {
+    setErrorAlert('');
+  };
+
+  const addUserToLocalStorage = (newUser) => {
+    const userList = JSON.parse(localStorage.getItem('UserList')) || [];
+    const newUserId = userList.length > 0 ? userList[userList.length - 1].id + 1 : 1;
+    newUser.id = newUserId;
+    userList.unshift(newUser);
+    localStorage.setItem('UserList', JSON.stringify(userList));
+
+    // Set register success to true to show Snackbar
+    setRegisterSuccess(true);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const testUsers = [
-      { id: '1', username: 'Raccoon', password: '123', firstname: 'Micheal', lastname: 'Johansan', personid: '6852100741' },
-      { id: '2', username: 'Cat', password: '123', firstname: 'Steven', lastname: 'Blackburgur', personid: '6852100732' },
-      { id: '3', username: 'Dog', password: '123', firstname: 'Jonathan', lastname: 'Bermington', personid: '6852100748' },
-    ];
+    setErrorAlert('');
 
-    const lowerCaseUsername = username.toLowerCase();
-    const lowerCasePassword = password.toLowerCase();
-
-    const user = testUsers.find((u) => u.username.toLowerCase() === lowerCaseUsername && u.password === lowerCasePassword);
-
-    if (user) {
-      login(user.id, user.username, user.firstname, user.lastname, user.personid);
-
-      setLoginStatus('success');
-      console.log('Login Success');
-      console.log('User', user);
-      setTimeout(() => {
-        navigate('/course');
-      }, 1000);
-    } else {
-      setLoginStatus('error');
-      console.log('Username or Password Incorrect');
+    if (studentId.length !== 10) {
+      setErrorAlert('StudentID must be 10 characters long');
+      setTimeout(handleCloseAlert, 5000);
+      return;
     }
+
+    if (password.length < 6) {
+      setErrorAlert('Password must be at least 6 characters long');
+      setTimeout(handleCloseAlert, 5000);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorAlert('Password and Confirm Password do not match');
+      setTimeout(handleCloseAlert, 5000);
+      return;
+    }
+
+    if (!firstname) {
+      setErrorAlert('Please enter your first name');
+      setTimeout(handleCloseAlert, 5000);
+      return;
+    }
+
+    if (!lastname) {
+      setErrorAlert('Please enter your last name');
+      setTimeout(handleCloseAlert, 5000);
+      return;
+    }
+
+    if (!email) {
+      setErrorAlert('Please enter your email');
+      setTimeout(handleCloseAlert, 5000);
+      return;
+    }
+
+    const newUser = {
+      id: 0,
+      studentId,
+      password,
+      email,
+      firstname,
+      lastname,
+      role,
+    };
+
+    addUserToLocalStorage(newUser);
   };
+
+  const navigate = useNavigate();
+
+  // Navigate to login page after a short delay when registration is successful
+  if (registerSuccess) {
+    setTimeout(() => {
+      navigate('/login');
+    }, 2000);
+  }
 
   return (
     <div className='main-content' style={{
@@ -63,41 +142,75 @@ function Register() {
       margin: '0px',
       padding: '0px',
       overflowY: 'auto',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
     }}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="30vw">
         <Box
           sx={{
-            marginTop: 0,
-            padding: "50px",
+            padding: "3%",
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             borderRadius: "15px",
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            width: '100%',
+            maxWidth: '30vw',
+            margin: 'auto',
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
             <LockOpenIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Register
           </Typography>
           <Box sx={{ mt: 1 }}>
             <TextField
-              style={{ minWidth: '250px' }}
+              style={{ width: '100%' }}
               margin="normal"
               required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
+              id="studentId"
+              label="Student ID"
+              name="studentId"
               autoFocus
-              value={username}
-              onChange={handleUsernameChange}
+              value={studentId}
+              onChange={(event) => {
+                const inputText = event.target.value;
+                const numericInput = inputText.replace(/\D/g, '');
+                setStudentId(numericInput.slice(0, 10));
+              }}
             />
+
+            <div style={{ display: 'flex' }}>
+              <TextField
+                style={{ width: '100%', marginRight: '2%' }}
+                margin="normal"
+                required
+                id="firstname"
+                label="FisrtName"
+                name="firstname"
+                autoFocus
+                value={firstname}
+                onChange={handleFirstnameChange}
+              />
+              <TextField
+                style={{ width: '100%' }}
+                margin="normal"
+                required
+                id="lastname"
+                label="LastName"
+                name="lastname"
+                autoFocus
+                value={lastname}
+                onChange={handleLastnameChange}
+              />
+            </div>
             <TextField
+              style={{ width: '100%' }}
               margin="normal"
               required
-              fullWidth
               name="password"
               label="Password"
               type="password"
@@ -105,28 +218,80 @@ function Register() {
               value={password}
               onChange={handlePasswordChange}
             />
+            <TextField
+              style={{ width: '100%' }}
+              margin="normal"
+              required
+              name="password"
+              label="Confirm Password"
+              type="password"
+              id="password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+            />
+            <TextField
+              style={{ width: '100%' }}
+              margin="normal"
+              required
+              name="email"
+              label="Email"
+              type="email"
+              id="email "
+              value={email}
+              onChange={handleEmailChange}
+            />
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={roleList}
+              sx={{ width: '100%', marginTop: '3%' }}
+              onChange={handleRoleChange}
+              renderInput={(params) => <TextField {...params} label="Role" />}
+            />
+
             <Button
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
               onClick={handleSubmit}
             >
-              Login
+              Register
             </Button>
-          </Box>
-          <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <p style={{ color: 'gray', fontSize: '16px', margin: '0' }}>
-              {loginStatus === 'success' && (
-                <div style={{ color: 'green', marginBottom: '10px' }}>
-                  Login Success
-                </div>
-              )}
-              {loginStatus === 'error' && (
-                <div style={{ color: 'red', marginBottom: '10px' }}>
-                  Username or Password Incorrect
-                </div>
-              )}
-            </p>
+            {errorAlert && (
+              <Alert
+                severity="error"
+                sx={{
+                  position: 'fixed',
+                  top: 'auto',
+                  bottom: 0,
+                  right: 0,
+                  margin: '20px',
+                }}
+                onClose={handleCloseAlert}
+              >
+                {errorAlert}
+              </Alert>
+            )}
+            <Snackbar
+              open={registerSuccess}
+              autoHideDuration={2000}
+              onClose={handleCloseSnackbar}
+              message="Register Successful"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
+            >
+              <Alert
+                severity="success"
+                sx={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'flex-end', 
+                  textAlign: 'right', 
+                }}
+                onClose={handleCloseSnackbar}
+              >
+                Register Successful
+              </Alert>
+            </Snackbar>
           </Box>
         </Box>
       </Container>

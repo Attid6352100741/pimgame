@@ -13,7 +13,11 @@ function Home() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
-    const isStudent = user && user.roll === 'Student';
+
+    const storedUserList = JSON.parse(localStorage.getItem('UserList')) || [];
+    const storedUser = storedUserList.find(u => u.id === user.id);
+    const userRole = storedUser ? storedUser.role : '';
+    const isStudent = userRole === 'Student';
 
     const handleClose = () => setOpenDialog(false);
 
@@ -85,7 +89,7 @@ function Home() {
                                 borderRadius: "15px",
                                 width: '20vw',
                                 height: '35vh',
-                                transition: 'transform 1s ease-in-out', // Set the same duration for all boxes
+                                transition: 'transform 1s ease-in-out',
                             }}
                         >
                             <div style={{
