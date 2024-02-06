@@ -18,6 +18,7 @@ function Home() {
     const storedUser = storedUserList.find(u => u.id === user.id);
     const userRole = storedUser ? storedUser.role : '';
     const isStudent = userRole === 'Student';
+    
 
     const handleClose = () => setOpenDialog(false);
 
@@ -32,6 +33,10 @@ function Home() {
 
     const handleTestRacing = () => {
         navigate('/home/testracing');
+    };
+
+    const handleSetting = () => {
+        navigate('/home/setting');
     };
 
     useEffect(() => {
@@ -69,7 +74,7 @@ function Home() {
                             }}>
                             </div>
                             <div>
-                                <Button variant="contained" sx={{ width: '8vw', marginTop: '10%' }}>Racing</Button>
+                                <Button variant="outlined" sx={{ width: '8vw', marginTop: '10%' }}>Racing</Button>
                             </div>
                         </Box>
                     </div>
@@ -100,7 +105,7 @@ function Home() {
                             }}>
                             </div>
                             <div>
-                                <Button variant="contained" onClick={handleCourse} sx={{ width: '8vw', marginTop: '10%' }}>Course</Button>
+                                <Button variant="outlined" onClick={handleCourse} sx={{ width: '8vw', marginTop: '10%' }}>Course</Button>
                             </div>
                         </Box>
                     </div>
@@ -132,7 +137,7 @@ function Home() {
                                 }}>
                                 </div>
                                 <div>
-                                    <Button variant="contained" sx={{ width: '8vw', marginTop: '10%' }}>Setting</Button>
+                                    <Button variant="outlined" onClick={handleSetting} sx={{ width: '8vw', marginTop: '10%' }}>Setting</Button>
                                 </div>
                             </Box>
                         </div>

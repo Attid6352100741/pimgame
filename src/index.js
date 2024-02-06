@@ -11,6 +11,7 @@ import Testracing from './page/test_racing';
 import Courstsetting from './page/cousrtsetting';
 import Register from './page/register';
 import Group from './page/group';
+import Setting from './page/setting';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -25,6 +26,7 @@ root.render(
           <Route path="/group" element={<Group />} />
           <Route path="/register" element={<Register />} />
           <Route path="/home/course" element={<Course />} />
+          <Route path="/home/setting" element={<Setting />} />
           <Route path="/home/course/setting/:courseId" element={<Courstsetting />} />
           <Route path="/home/course/games/:courseId/week/:week" element={<Games />} />
           <Route path="/home/testracing" element={<Testracing />} />

@@ -62,19 +62,37 @@ function Register() {
 
   const addUserToLocalStorage = (newUser) => {
     const userList = JSON.parse(localStorage.getItem('UserList')) || [];
-    const newUserId = userList.length > 0 ? userList[userList.length - 1].id + 1 : 1;
+    const maxUserId = userList.reduce((maxId, user) => Math.max(maxId, user.id), 0);
+    const newUserId = maxUserId + 1;
+  
     newUser.id = newUserId;
     userList.unshift(newUser);
     localStorage.setItem('UserList', JSON.stringify(userList));
-
-    // Set register success to true to show Snackbar
     setRegisterSuccess(true);
   };
+  
+
+  const isDuplicateData = () => {
+    const userList = JSON.parse(localStorage.getItem('UserList')) || [];
+    return userList.some(
+      (user) => user.studentId === studentId || user.email === email
+    );
+  };
+
+  const handleBack = () => {
+    navigate('/login');
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     setErrorAlert('');
+
+    if (isDuplicateData()) {
+      setErrorAlert('Student ID or Email already exists');
+      setTimeout(handleCloseAlert, 5000);
+      return;
+    }
 
     if (studentId.length !== 10) {
       setErrorAlert('StudentID must be 10 characters long');
@@ -127,7 +145,6 @@ function Register() {
 
   const navigate = useNavigate();
 
-  // Navigate to login page after a short delay when registration is successful
   if (registerSuccess) {
     setTimeout(() => {
       navigate('/login');
@@ -248,15 +265,26 @@ function Register() {
               onChange={handleRoleChange}
               renderInput={(params) => <TextField {...params} label="Role" />}
             />
+            <div style={{ marginTop: '5%', display: 'flex', justifyContent: 'flex-end' }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                color="error"
+                sx={{ width: '20%' , marginRight: '2%' }}
+                onClick={handleBack}
+              >
+                Back
+              </Button>
 
-            <Button
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              onClick={handleSubmit}
-            >
-              Register
-            </Button>
+              <Button
+                fullWidth
+                variant="outlined"
+                sx={{ width: '20%' }}
+                onClick={handleSubmit}
+              >
+                Register
+              </Button>
+            </div>
             {errorAlert && (
               <Alert
                 severity="error"
@@ -277,15 +305,15 @@ function Register() {
               autoHideDuration={2000}
               onClose={handleCloseSnackbar}
               message="Register Successful"
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
               <Alert
                 severity="success"
                 sx={{
                   width: '100%',
                   display: 'flex',
-                  justifyContent: 'flex-end', 
-                  textAlign: 'right', 
+                  justifyContent: 'flex-end',
+                  textAlign: 'right',
                 }}
                 onClose={handleCloseSnackbar}
               >
