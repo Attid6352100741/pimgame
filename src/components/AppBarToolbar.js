@@ -37,7 +37,12 @@ const AppBarToolbar = ({ user: propUser }) => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setSelectedImage(reader.result);
-                localStorage.setItem(`userImage_${user.id}`, reader.result);
+                const allProfileImages = JSON.parse(localStorage.getItem('profileImgList')) || {};
+                allProfileImages[user.id] = {
+                    id: user.id,
+                    imageLink: reader.result
+                };
+                localStorage.setItem('profileImgList', JSON.stringify(allProfileImages));
             };
             reader.readAsDataURL(file);
         }
@@ -66,16 +71,20 @@ const AppBarToolbar = ({ user: propUser }) => {
 
     useEffect(() => {
         const storedTestHistory = JSON.parse(localStorage.getItem(`testHistory_${user?.id || ''}`));
-
+    
         if (storedTestHistory) {
             setTestHistory(storedTestHistory);
         }
-
-        const storedUserImage = localStorage.getItem(`userImage_${user?.id || ''}`);
-        if (storedUserImage) {
-            setSelectedImage(storedUserImage);
+    
+        const allProfileImages = JSON.parse(localStorage.getItem('profileImgList')) || {};
+        const userImage = allProfileImages[user?.id];
+    
+        if (userImage) {
+            setSelectedImage(userImage.imageLink);
         }
     }, [user?.id]);
+    
+    
 
     const handleLogout = () => {
         localStorage.removeItem('user', JSON.stringify);
