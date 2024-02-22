@@ -1,12 +1,13 @@
+// register.js
 import { Button, Typography, Avatar, Box, Alert, Snackbar } from "@mui/material";
 import React, { useState, useMemo } from 'react';
-import { useUser } from '../components/UserContext';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Autocomplete from '@mui/material/Autocomplete';
 import loginBackground from '../img/login.jpg';
+import { addUserToFirebase , getUsersFromFirebase } from '../api/apiconfig';
 import '../style/login.css';
 
 function Register() {
@@ -60,96 +61,68 @@ function Register() {
     setErrorAlert('');
   };
 
-  const addUserToLocalStorage = (newUser) => {
-    const userList = JSON.parse(localStorage.getItem('UserList')) || [];
-    const maxUserId = userList.reduce((maxId, user) => Math.max(maxId, user.id), 0);
-    const newUserId = maxUserId + 1;
-  
-    newUser.id = newUserId;
-    userList.unshift(newUser);
-    localStorage.setItem('UserList', JSON.stringify(userList));
-    setRegisterSuccess(true);
-  };
-  
-
-  const isDuplicateData = () => {
-    const userList = JSON.parse(localStorage.getItem('UserList')) || [];
-    return userList.some(
-      (user) => user.studentId === studentId || user.email === email
-    );
-  };
-
   const handleBack = () => {
     navigate('/login');
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     setErrorAlert('');
-
+  
     if (isDuplicateData()) {
       setErrorAlert('Student ID or Email already exists');
       setTimeout(handleCloseAlert, 5000);
       return;
     }
-
-    if (studentId.length !== 10) {
-      setErrorAlert('StudentID must be 10 characters long');
-      setTimeout(handleCloseAlert, 5000);
-      return;
-    }
-
+  
     if (password.length < 6) {
       setErrorAlert('Password must be at least 6 characters long');
       setTimeout(handleCloseAlert, 5000);
       return;
     }
-
+  
     if (password !== confirmPassword) {
       setErrorAlert('Password and Confirm Password do not match');
       setTimeout(handleCloseAlert, 5000);
       return;
     }
-
-    if (!firstname) {
-      setErrorAlert('Please enter your first name');
+  
+    if (!studentId || !firstname || !lastname || !email || !role) {
+      setErrorAlert('Please fill in all required fields');
       setTimeout(handleCloseAlert, 5000);
       return;
     }
-
-    if (!lastname) {
-      setErrorAlert('Please enter your last name');
-      setTimeout(handleCloseAlert, 5000);
-      return;
-    }
-
-    if (!email) {
-      setErrorAlert('Please enter your email');
-      setTimeout(handleCloseAlert, 5000);
-      return;
-    }
-
+  
     const newUser = {
-      id: 0,
       studentId,
-      password,
       email,
       firstname,
       lastname,
+      password,
       role,
     };
+  
+    try {
+      await addUserToFirebase(newUser);
+      setRegisterSuccess(true);
+      getUsersFromFirebase();
+    } catch (error) {
+      console.error('Error adding user to Firebase:', error);
+      setErrorAlert('Failed to register. Please try again.');
+    }
+  };
 
-    addUserToLocalStorage(newUser);
+  const isDuplicateData = () => {
+    return false;
   };
 
   const navigate = useNavigate();
-
-  if (registerSuccess) {
-    setTimeout(() => {
-      navigate('/login');
-    }, 2000);
-  }
+  // if (registerSuccess) {
+  //   setTimeout(() => {
+  //     navigate('/login');
+  //   }, 2000);
+  // }
 
   return (
     <div className='main-content' style={{
@@ -270,7 +243,7 @@ function Register() {
                 fullWidth
                 variant="outlined"
                 color="error"
-                sx={{ width: '20%' , marginRight: '2%' }}
+                sx={{ width: '20%', marginRight: '2%' }}
                 onClick={handleBack}
               >
                 Back

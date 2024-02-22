@@ -12,6 +12,7 @@ import Courstsetting from './page/cousrtsetting';
 import Register from './page/register';
 import Group from './page/group';
 import Setting from './page/setting';
+import Uploadfile from './page/uploadfile';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -27,6 +28,7 @@ root.render(
           <Route path="/register" element={<Register />} />
           <Route path="/home/course" element={<Course />} />
           <Route path="/home/setting" element={<Setting />} />
+          <Route path="/uploadfile" element={<Uploadfile />} />
           <Route path="/home/course/setting/:courseId" element={<Courstsetting />} />
           <Route path="/home/course/games/:courseId/week/:week" element={<Games />} />
           <Route path="/home/testracing" element={<Testracing />} />

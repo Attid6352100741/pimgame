@@ -8,6 +8,10 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import loginBackground from '../img/login.jpg';
 import '../style/login.css';
 
+//-------------API-----------------
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { app } from '../api/apiconfig';
+
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -35,36 +39,36 @@ function Login() {
     setErrorAlert('');
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
   
     setErrorAlert('');
   
-    const userList = JSON.parse(localStorage.getItem('UserList')) || [];
-    if (username.length !== 10 || !/^\d+$/.test(username)) {
-      setErrorAlert('Student ID must be exactly 10 digits and contain only numeric characters');
-      setTimeout(handleCloseAlert, 5000);
-      return;
-    }
+    try {
+      const auth = getAuth(app);
   
-    const user = userList.find((u) => u.studentId === username && u.password === password);
+      // Sign in with email and password using the provided username (StudentID)
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
   
-    if (user) {
-      login(user.id, user.studentId, user.firstname, user.lastname, user.role);
+      // Get user data from Firebase
+      const userData = userCredential.user;
+  
+      // Now you can use userData to perform actions, such as logging in and navigating to the home page
+      login(userData.uid, username, userData.displayName, '', ''); // Assuming displayName contains both first and last name
       setLoginStatus('success');
       console.log('Login Success');
-      console.log('User', user);
+  
       setTimeout(() => {
         navigate('/home');
       }, 1000);
-    } else {
+    } catch (error) {
       setLoginStatus('error');
-      setErrorAlert('Username or Password Incorrect');
+      setErrorAlert('Student ID or Password Incorrect');
       setTimeout(handleCloseAlert, 5000);
-      console.log('StudentID or Password Incorrect');
+      console.log('Student ID or Password Incorrect', error.message);
     }
   };
-  
+
 
   return (
     <div className='main-content' style={{
