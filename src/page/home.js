@@ -1,147 +1,140 @@
 import React, { useState, useEffect } from 'react';
 import { Box } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
+import { Typography, Avatar, Dialog, DialogTitle, Button, Menu, MenuItem } from "@mui/material";
 import Container from '@mui/material/Container';
 import { useUser } from '../components/UserContext';
 import { useNavigate } from 'react-router-dom';
 import AppBarToolbar from '../components/AppBarToolbar';
-import Button from '@mui/material/Button';
-import systempicture from '../gif/system.gif'
-import coursepicture from '../gif/course.gif'
-import gamespicture from '../gif/games.gif'
+
+//Mui
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+
+//Slider
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+//PICTURE
+import banner1 from "../img/banner1.png"
+import banner2 from "../img/banner2.png"
+import group from "../img/group.png"
+import course from "../img/course.png"
+import race from "../img/race.png"
+
 
 function Home() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
-    const [openDialog, setOpenDialog] = useState(false);
-
-    const storedUserList = JSON.parse(localStorage.getItem('UserList')) || [];
-    const storedUser = storedUserList.find(u => u.id === user.id);
-    const userRole = storedUser ? storedUser.role : '';
-    const isStudent = userRole === 'Student';
-    
-
-    const handleClose = () => setOpenDialog(false);
 
     const handleLogout = () => {
         logout();
         navigate('/login');
     };
-
-    const handleCourse = () => {
-        navigate('/home/course');
-    };
-
-    const handleTestRacing = () => {
-        navigate('/home/testracing');
-    };
-
-    const handleSetting = () => {
-        navigate('/home/setting');
-    };
-
-    useEffect(() => {
-        setOpenDialog(true);
-    }, []);
-
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#b9dff4', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className='maincontent' style={{ width: '100vw', height: '100vh', backgroundColor: '#f6f7f1' }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
-            <Container component="main" maxWidth="xs" className="container">
-                <div className="responsive-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                    {/* First Box */}
-                    <div>
-                        <Box
-                            sx={{
-                                marginTop: 5,
-                                marginRight: '10px',
-                                marginBottom: '20px',
-                                padding: "20px",
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                bgcolor: 'background.paper',
-                                borderRadius: "15px",
-                                width: '20vw',
-                                height: '35vh',
-                                transition: 'transform 1s ease-in-out',
-                            }}
-                        >
-                            <div style={{
-                                backgroundImage: `url(${coursepicture})`,
-                                backgroundSize: 'contain',
-                                width: '20vw',
-                                height: '30vh',
-                            }}>
-                            </div>
-                            <div>
-                                <Button variant="outlined" sx={{ width: '8vw', marginTop: '10%' }}>Racing</Button>
-                            </div>
-                        </Box>
-                    </div>
-
-                    {/* Second Box */}
-                    <div>
-                        <Box
-                            sx={{
-                                marginTop: 5,
-                                marginRight: '10px',
-                                marginBottom: '20px',
-                                padding: "20px",
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                bgcolor: 'background.paper',
-                                borderRadius: "15px",
-                                width: '20vw',
-                                height: '35vh',
-                                transition: 'transform 1s ease-in-out',
-                            }}
-                        >
-                            <div style={{
-                                backgroundImage: `url(${gamespicture})`,
-                                backgroundSize: 'contain',
-                                width: '20vw',
-                                height: '30vh',
-                            }}>
-                            </div>
-                            <div>
-                                <Button variant="outlined" onClick={handleCourse} sx={{ width: '8vw', marginTop: '10%' }}>Course</Button>
-                            </div>
-                        </Box>
-                    </div>
-
-                    {/* Third Box */}
-                    {isStudent ? null : (
+            <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div className='banner' style={{ width: '100vw', height: '30vh', backgroundColor: 'black', overflow: 'hidden' }}>
+                    <Slider autoplay={true} autoplaySpeed={5000} infinite={true} speed={2000}>
                         <div>
-                            <Box
-                                sx={{
-                                    marginTop: 5,
-                                    marginRight: '10px',
-                                    marginBottom: '20px',
-                                    padding: "20px",
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    bgcolor: 'background.paper',
-                                    borderRadius: "15px",
-                                    width: '20vw',
-                                    height: '35vh',
-                                    transition: 'transform 1s ease-in-out',
-                                }}
-                            >
-                                <div style={{
-                                    backgroundImage: `url(${systempicture})`,
-                                    backgroundSize: 'cover',
-                                    width: '15vw',
-                                    height: '30vh',
-                                }}>
-                                </div>
-                                <div>
-                                    <Button variant="outlined" onClick={handleSetting} sx={{ width: '8vw', marginTop: '10%' }}>Setting</Button>
-                                </div>
-                            </Box>
+                            <img src={banner1} alt="Slide 1" style={{ width: '100%', height: '30.4vh', objectFit: 'contain' }} />
                         </div>
-                    )}
+                        <div>
+                            <img src={banner2} alt="Slide 2" style={{ width: '100%', height: '30.4vh', objectFit: 'contain' }} />
+                        </div>
+                    </Slider>
+                </div>
+                <div className='title' style={{ marginTop: '10%' }}>
+                    <Typography variant="h3" style={{ fontWeight: 'bold', fontSize: '24px' }}>
+                        Status Board
+                    </Typography>
+                </div>
+                <div className='status' style={{ display: 'flex' }}>
+                    <List style={{ width: '100vw', display: 'flex' }}>
+                        <ListItem>
+                            <Card sx={{ maxWidth: 700 }}>
+                                <CardMedia
+                                    component="img"
+                                    alt="green iguana"
+                                    height="100%"
+                                    image={group}
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        Group
+                                    </Typography>
+                                    <Divider style={{ margin: '10px 0' }} />
+                                    <Typography variant="body2" color="text.secondary">
+                                        Lizards are a widespread group of squamate reptiles, with over 6,000
+                                        species, ranging across all continents except Antarctica
+                                    </Typography>
+                                </CardContent>
+                                <CardActions>
+                                    <Button variant="contained" size="small" style={{ width: '100%', height: '4vh' }}>View</Button>
+                                </CardActions>
+                            </Card>
+                        </ListItem>
+                        <ListItem>
+                            <Card sx={{ maxWidth: 700 }}>
+                                <CardMedia
+                                    component="img"
+                                    alt="green iguana"
+                                    height="100%"
+                                    image={course}
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        Course
+                                    </Typography>
+                                    <Divider style={{ margin: '10px 0' }} />
+                                    <Typography variant="body2" color="text.secondary">
+                                        Lizards are a widespread group of squamate reptiles, with over 6,000
+                                        species, ranging across all continents except Antarctica
+                                    </Typography>
+                                </CardContent>
+                                <CardActions>
+                                    <Button variant="contained" size="small" style={{ width: '100%', height: '4vh' }} sx={{
+                                        width: '25%', backgroundColor: '#68c957',
+                                        '&:hover': {
+                                            backgroundColor: '#4f964c',
+                                        },
+                                    }}>View</Button>
+                                </CardActions>
+                            </Card>
+                        </ListItem>
+                        <ListItem>
+                            <Card sx={{ maxWidth: 700 }}>
+                                <CardMedia
+                                    component="img"
+                                    alt="green iguana"
+                                    height="100%"
+                                    image={race}
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        Race
+                                    </Typography>
+                                    <Divider style={{ margin: '10px 0' }} />
+                                    <Typography variant="body2" color="text.secondary">
+                                        Lizards are a widespread group of squamate reptiles, with over 6,000
+                                        species, ranging across all continents except Antarctica
+                                    </Typography>
+                                </CardContent>
+                                <CardActions>
+                                    <Button variant="contained" size="small" style={{ width: '100%', height: '4vh' }} sx={{
+                                        width: '25%', backgroundColor: '#e85046',
+                                        '&:hover': {
+                                            backgroundColor: '#cf3a30',
+                                        },
+                                    }}>Enter Code</Button>
+                                </CardActions>
+                            </Card>
+                        </ListItem>
+                    </List>
                 </div>
             </Container>
         </div>

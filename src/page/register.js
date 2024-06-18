@@ -1,13 +1,15 @@
 // register.js
 import { Button, Typography, Avatar, Box, Alert, Snackbar } from "@mui/material";
+import { addUserToFirebase, getUsersFromFirebase } from '../api/apiconfig';
+import pictureLogo from '../img/Logo.png'
 import React, { useState, useMemo } from 'react';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Autocomplete from '@mui/material/Autocomplete';
-import loginBackground from '../img/login.jpg';
-import { addUserToFirebase , getUsersFromFirebase } from '../api/apiconfig';
+import english from '../img/english.png'
+import qrcode from '../img/qrcode.png';
 import '../style/login.css';
 
 function Register() {
@@ -67,33 +69,33 @@ function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     setErrorAlert('');
-  
-    if (isDuplicateData()) {
+
+    if (await isDuplicateData()) {
       setErrorAlert('Student ID or Email already exists');
       setTimeout(handleCloseAlert, 5000);
       return;
     }
-  
+
     if (password.length < 6) {
       setErrorAlert('Password must be at least 6 characters long');
       setTimeout(handleCloseAlert, 5000);
       return;
     }
-  
+
     if (password !== confirmPassword) {
       setErrorAlert('Password and Confirm Password do not match');
       setTimeout(handleCloseAlert, 5000);
       return;
     }
-  
+
     if (!studentId || !firstname || !lastname || !email || !role) {
       setErrorAlert('Please fill in all required fields');
       setTimeout(handleCloseAlert, 5000);
       return;
     }
-  
+
     const newUser = {
       studentId,
       email,
@@ -102,7 +104,7 @@ function Register() {
       password,
       role,
     };
-  
+
     try {
       await addUserToFirebase(newUser);
       setRegisterSuccess(true);
@@ -113,50 +115,40 @@ function Register() {
     }
   };
 
-  const isDuplicateData = () => {
-    return false;
+  const isDuplicateData = async () => {
+    try {
+      const usersData = await getUsersFromFirebase();
+      const duplicateStudentId = Object.values(usersData).some(user => user.studentId === studentId);
+      const duplicateEmail = Object.values(usersData).some(user => user.email === email);
+
+      return duplicateStudentId || duplicateEmail;
+    } catch (error) {
+      console.error('Error checking for duplicate data:', error);
+      return false;
+    }
   };
 
   const navigate = useNavigate();
-  // if (registerSuccess) {
-  //   setTimeout(() => {
-  //     navigate('/login');
-  //   }, 2000);
-  // }
+  if (registerSuccess) {
+    setTimeout(() => {
+      navigate('/login');
+    }, 2000);
+  }
 
   return (
-    <div className='main-content' style={{
-      height: '100vh',
-      backgroundImage: `url(${loginBackground})`,
-      backgroundSize: 'cover',
-      margin: '0px',
-      padding: '0px',
-      overflowY: 'auto',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-      <Container component="main" maxWidth="30vw">
-        <Box
-          sx={{
-            padding: "3%",
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            borderRadius: "15px",
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            width: '100%',
-            maxWidth: '30vw',
-            margin: 'auto',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-            <LockOpenIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Register
+    <div className="main" style={{ backgroundColor: 'pink', width: '100vw', height: '100vh', display: 'flex' }}>
+      <div className="header1" style={{ backgroundColor: '#f6f7f1', width: '70%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="footer" style={{ backgroundColor: '#3fab3f', width: '100%', textAlign: 'center', height: '5%' }}>
+          <Typography variant="caption" style={{ color: 'white' }}>
+            © Panyapiwat institute of management.
           </Typography>
+        </div>
+        <div className="content" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
           <Box sx={{ mt: 1 }}>
+            <div style={{ textAlign: 'center' }}>
+              <img src={pictureLogo} alt="Company Logo" style={{ width: '20%', height: 'auto' }} />
+              <h2 style={{}}>Register Account</h2>
+            </div>
             <TextField
               style={{ width: '100%' }}
               margin="normal"
@@ -241,9 +233,9 @@ function Register() {
             <div style={{ marginTop: '5%', display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 fullWidth
-                variant="outlined"
+                variant="contained"
                 color="error"
-                sx={{ width: '20%', marginRight: '2%' }}
+                sx={{ width: '20%', marginRight: '2%' , backgroundColor:'#ff5f59'}}
                 onClick={handleBack}
               >
                 Back
@@ -251,8 +243,14 @@ function Register() {
 
               <Button
                 fullWidth
-                variant="outlined"
-                sx={{ width: '20%' }}
+                variant="contained"
+                sx={{
+                  width: '20%',
+                  backgroundColor: '#68c957',
+                  '&:hover': {
+                    backgroundColor: '#4f964c',
+                  },
+                }}
                 onClick={handleSubmit}
               >
                 Register
@@ -294,8 +292,29 @@ function Register() {
               </Alert>
             </Snackbar>
           </Box>
-        </Box>
-      </Container>
+        </div>
+        {/* Footer */}
+        <div className="footer" style={{ backgroundColor: '#3fab3f', width: '100%', textAlign: 'center', height: '5%' }}>
+          <Typography variant="caption" style={{ color: 'white' }}>
+            © Panyapiwat institute of management.
+          </Typography>
+        </div>
+      </div>
+
+      <div className="header2" style={{ backgroundColor: 'white', width: '40%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="footer" style={{ backgroundColor: '#3fab3f', width: '100%', textAlign: 'center', height: '5%' }}>
+          <Typography variant="caption" style={{ color: 'white' }}>
+            © Panyapiwat institute of management.
+          </Typography>
+        </div>
+        <img src={english} alt="Company Logo" style={{ width: '100%', height: 'auto' }} />
+        <img src={qrcode} alt="Company Logo" style={{ width: '100%', height: 'auto' }} />
+        <div className="footer" style={{ backgroundColor: '#3fab3f', width: '100%', textAlign: 'center', height: '5%' }}>
+          <Typography variant="caption" style={{ color: 'white' }}>
+            © Panyapiwat institute of management.
+          </Typography>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,15 +1,13 @@
-import { Button, Typography, Avatar, Box, Alert, Snackbar } from "@mui/material";
+//login.js
 import React, { useState } from 'react';
-import { useUser } from '../components/UserContext';
-import TextField from '@mui/material/TextField';
-import Container from '@mui/material/Container';
-import { useNavigate } from 'react-router-dom';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import loginBackground from '../img/login.jpg';
-import '../style/login.css';
-
-//-------------API-----------------
+import { Button, Typography, TextField, Snackbar, Alert } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import pictureLogo from '../img/Logo.png'
+import qrcode from '../img/qrcode.png'
+import english from '../img/english.png'
+import view from '../img/view.png'
+import forgotpassword from './forgotpassword';
 import { app } from '../api/apiconfig';
 
 function Login() {
@@ -17,12 +15,15 @@ function Login() {
   const [password, setPassword] = useState('');
   const [loginStatus, setLoginStatus] = useState(null);
   const [errorAlert, setErrorAlert] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const navigate = useNavigate();
-  const { login } = useUser();
 
-  const handleCloseSnackbar = () => {
-    setLoginStatus(null);
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
   };
 
   const handleUsernameChange = (event) => {
@@ -41,83 +42,49 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     setErrorAlert('');
-  
+
     try {
       const auth = getAuth(app);
-  
-      // Sign in with email and password using the provided username (StudentID)
       const userCredential = await signInWithEmailAndPassword(auth, username, password);
-  
-      // Get user data from Firebase
       const userData = userCredential.user;
-  
-      // Now you can use userData to perform actions, such as logging in and navigating to the home page
-      login(userData.uid, username, userData.displayName, '', ''); // Assuming displayName contains both first and last name
       setLoginStatus('success');
-      console.log('Login Success');
-  
-      setTimeout(() => {
-        navigate('/home');
-      }, 1000);
+      setOpenSnackbar(true);
+      navigate('/home');
     } catch (error) {
       setLoginStatus('error');
-      setErrorAlert('Student ID or Password Incorrect');
+      setErrorAlert('Email or Password Incorrect');
       setTimeout(handleCloseAlert, 5000);
-      console.log('Student ID or Password Incorrect', error.message);
+      console.log('Email or Password Incorrect', error.message);
     }
   };
 
-
   return (
-    <div className='main-content' style={{
-      height: '100vh',
-      backgroundImage: `url(${loginBackground})`,
-      backgroundSize: 'cover',
-      margin: '0px',
-      padding: '0px',
-      overflowY: 'auto',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-      <Container component="main" maxWidth="30vw">
-        <Box
-          sx={{
-            padding: "3%",
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            borderRadius: "15px",
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            width: '100%',
-            maxWidth: '25vw',
-            margin: 'auto',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-            <LockOpenIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
+    <div className="main" style={{ backgroundColor: 'pink', width: '100vw', height: '100vh', display: 'flex' }}>
+      <div className="header1" style={{ backgroundColor: '#f6f7f1', width: '70%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="footer" style={{ backgroundColor: '#3fab3f', width: '100%', textAlign: 'center', height: '5%' }}>
+          <Typography variant="caption" style={{ color: 'white' }}>
+            © Panyapiwat institute of management.
           </Typography>
-          <Box sx={{ mt: 1 }}>
+        </div>
+        <div className="content" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+          <div className="login" style={{ textAlign: 'center', width: '50%' }}>
+            <img src={pictureLogo} alt="Company Logo" style={{ width: '30%', height: 'auto', marginBottom: '10%' }} />
+            <Typography>Please login to your account</Typography>
             <TextField
-              style={{ width: '100%' }}
+              style={{ width: '70%' }}
               margin="normal"
-              required
               id="username"
-              label="Student ID"
+              label="Email address"
               name="username"
               autoFocus
               value={username}
               onChange={handleUsernameChange}
             />
             <TextField
-              style={{ width: '100%' }}
+              style={{ width: '70%' }}
               margin="normal"
-              required
               name="password"
               label="Password"
               type="password"
@@ -125,69 +92,111 @@ function Login() {
               value={password}
               onChange={handlePasswordChange}
             />
-            <div style={{ marginTop: '5%', display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{
+                width: '70%', marginTop: '3%', backgroundColor: '#22b8d6',
+                '&:hover': {
+                  backgroundColor: '#188aa1',
+                },
+              }}
+              onClick={handleSubmit}
+            >
+              Login
+            </Button>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }}>
+              <Typography variant="body2" color="textSecondary" style={{ marginTop: '3%' }}>
+                <Link to="/forgotpassword" underline="hover">
+                  Forgot password?
+                </Link>
+              </Typography>
               <Button
                 fullWidth
-                variant="outlined"
-                sx={{ width: '20%', marginRight: '2%' }}
-                onClick={handleSubmit}
-              >
-                Login
-              </Button>
-              <Button
-                fullWidth
-                variant="outlined"
+                variant="contained"
                 color="success"
-                sx={{ width: '25%' }}
+                sx={{
+                  width: '25%', marginLeft: '3%', backgroundColor: '#68c957',
+                  '&:hover': {
+                    backgroundColor: '#4f964c',
+                  },
+                }}
                 onClick={() => navigate('/register')}
               >
                 Register
               </Button>
             </div>
+          </div>
+        </div>
+        {/* Footer */}
+        <div className="footer" style={{ backgroundColor: '#3fab3f', width: '100%', textAlign: 'center', height: '5%' }}>
+          <Typography variant="caption" style={{ color: 'white' }}>
+            © Panyapiwat institute of management.
+          </Typography>
+        </div>
+
+        {errorAlert && (
+          <Alert
+            severity="error"
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              margin: '20px',
+              textAlign: 'right',
+            }}
+            onClose={handleCloseAlert}
+          >
+            {errorAlert}
+          </Alert>
+        )}
+
+        {/* Snackbar for Success */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={2000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          sx={{
+            '& .MuiAlert-filledSuccess': {
+              backgroundColor: (theme) => theme.palette.success.main,
+            },
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            margin: '20px',
+          }}
+        >
+          <Alert
+            severity="success"
+            sx={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'flex-start',
+              textAlign: 'left',
+            }}
+            onClose={handleCloseSnackbar}
+          >
+            Login Successful
+          </Alert>
+        </Snackbar>
+      </div>
 
 
-            {errorAlert && (
-              <Alert
-                severity="error"
-                sx={{
-                  position: 'fixed',
-                  top: 'auto',
-                  bottom: 0,
-                  right: 0,
-                  margin: '20px',
-                }}
-                onClose={handleCloseAlert}
-              >
-                {errorAlert}
-              </Alert>
-            )}
-            <Snackbar
-              open={loginStatus === 'success'}
-              autoHideDuration={2000}
-              onClose={handleCloseSnackbar}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              sx={{
-                '& .MuiAlert-filledSuccess': {
-                  backgroundColor: theme => theme.palette.success.main,
-                },
-              }}
-            >
-              <Alert
-                severity="success"
-                sx={{
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  textAlign: 'right',
-                }}
-                onClose={handleCloseSnackbar}
-              >
-                Login Successful
-              </Alert>
-            </Snackbar>
-          </Box>
-        </Box>
-      </Container>
+      <div className="header2" style={{ backgroundColor: 'white', width: '40%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="footer" style={{ backgroundColor: '#3fab3f', width: '100%', textAlign: 'center', height: '5%' }}>
+          <Typography variant="caption" style={{ color: 'white' }}>
+            © Panyapiwat institute of management.
+          </Typography>
+        </div>
+        <img src={english} alt="Company Logo" style={{ width: '100%', height: 'auto' }} />
+        <img src={qrcode} alt="Company Logo" style={{ width: '100%', height: 'auto' }} />
+        <div className="footer" style={{ backgroundColor: '#3fab3f', width: '100%', textAlign: 'center', height: '5%' }}>
+          <Typography variant="caption" style={{ color: 'white' }}>
+            © Panyapiwat institute of management.
+          </Typography>
+        </div>
+      </div>
     </div>
   );
 }
