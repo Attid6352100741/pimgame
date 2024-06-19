@@ -14,6 +14,8 @@ import Uploadfile from './page/uploadfile';
 import Forgotpassword from './page/forgotpassword';
 import Racing from './page/racingtest';
 import Profile from './page/profile';
+import Gamestest from './page/games';
+import { Games } from '@mui/icons-material';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -33,6 +35,7 @@ root.render(
           <Route path="/setting" element={<Setting />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/uploadfile" element={<Uploadfile />} />
+          <Route path="/games" element={<Gamestest />} />
         </Routes>
       </Router>
     </UserProvider>

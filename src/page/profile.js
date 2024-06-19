@@ -1,37 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
-import { Divider } from '@mui/material';
-import {
-    AppBar,
-    Typography,
-    Container,
-    Snackbar,
-    Alert,
-    Tooltip,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    IconButton,
-    Button,
-    Dialog,
-    DialogTitle,
-    DialogActions,
-} from '@mui/material';
+import { Divider, Typography, Container } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import { useUser } from '../components/UserContext';
 import AppBarToolbar from '../components/AppBarToolbar';
-
-//ICON
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 
 function Profile() {
     const { user, logout } = useUser();
+
+    // Retrieve userData from localStorage
+    const userDataString = localStorage.getItem('userData');
+    const userData = userDataString ? JSON.parse(userDataString) : null;
 
     return (
         <div className='maincontent' style={{ width: '100vw', height: '100vh', backgroundColor: '#f6f7f1' }}>
@@ -39,9 +21,9 @@ function Profile() {
             <Container component="main" maxWidth="xs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div className='header' style={{ backgroundColor: 'white', width: '70vw', height: 'auto', borderRadius: '10px', marginTop: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '5%' }}>
                     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '3%' }}>
-                        <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" sx={{ width: 150, height: 150 }} />
-                        <h2>Attid Kingkoiklang</h2>
-                        <Typography>6352100741</Typography>
+                        <Avatar alt={userData?.firstname + ' ' + userData?.lastname} src="/static/images/avatar/3.jpg" sx={{ width: 150, height: 150 }} />
+                        <h2>{userData?.firstname + ' ' + userData?.lastname}</h2>
+                        <Typography>{userData?.studentId}</Typography>
                     </div>
                     <Divider sx={{ margin: '2%', border: '1px solid gray', width: '97%' }} />
 
@@ -59,33 +41,13 @@ function Profile() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* เพิ่มแถวข้อมูลตามที่ต้องการ */}
+                                    {/* Example rows */}
                                     <tr>
                                         <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>Course 1</td>
                                         <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>90</td>
                                         <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>2024-03-07</td>
                                     </tr>
-                                    <tr>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>Course 2</td>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>85</td>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>2024-03-08</td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>Course 3</td>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>42</td>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>2024-03-09</td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>Course 4</td>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>12</td>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>2024-03-10</td>
-                                    </tr>
-                                    <tr>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>Course 5</td>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>86</td>
-                                        <td style={{ border: '1px solid gray', padding: '8px', textAlign: 'center' }}>2024-03-11</td>
-                                    </tr>
-                                    {/* เพิ่มแถวข้อมูลตามที่ต้องการ 3 แถวถึง 5 แถว */}
+                                    {/* Add more rows as needed */}
                                 </tbody>
                             </table>
                         </div>
@@ -95,13 +57,11 @@ function Profile() {
                                     <Typography>Firstname</Typography>
                                     <TextField
                                         disabled
-                                        value={'Attid'}
+                                        value={userData?.firstname}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <IconButton disabled>
-                                                        <PersonOutlineOutlinedIcon style={{ fontSize: '30' }} />
-                                                    </IconButton>
+                                                    <PersonOutlineOutlinedIcon style={{ fontSize: '30' }} />
                                                 </InputAdornment>
                                             ),
                                             style: { textAlign: 'center', fontWeight: 'bold' }
@@ -112,13 +72,11 @@ function Profile() {
                                     <Typography>Lastname</Typography>
                                     <TextField
                                         disabled
-                                        value={'Kingkoiklang'}
+                                        value={userData?.lastname}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <IconButton disabled>
-                                                        <PersonOutlineOutlinedIcon style={{ fontSize: '30' }} />
-                                                    </IconButton>
+                                                    <PersonOutlineOutlinedIcon style={{ fontSize: '30' }} />
                                                 </InputAdornment>
                                             ),
                                             style: { textAlign: 'center', fontWeight: 'bold' }
@@ -131,13 +89,11 @@ function Profile() {
                                     <Typography>ID</Typography>
                                     <TextField
                                         disabled
-                                        value={'6352100741'}
+                                        value={userData?.studentId}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <IconButton disabled>
-                                                        <PersonOutlineOutlinedIcon style={{ fontSize: '30' }} />
-                                                    </IconButton>
+                                                    <PersonOutlineOutlinedIcon style={{ fontSize: '30' }} />
                                                 </InputAdornment>
                                             ),
                                             style: { textAlign: 'center', fontWeight: 'bold' }
@@ -148,13 +104,11 @@ function Profile() {
                                     <Typography>Role</Typography>
                                     <TextField
                                         disabled
-                                        value={'Student'}
+                                        value={userData?.role}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <IconButton disabled>
-                                                        <PersonOutlineOutlinedIcon style={{ fontSize: '30' }} />
-                                                    </IconButton>
+                                                    <PersonOutlineOutlinedIcon style={{ fontSize: '30' }} />
                                                 </InputAdornment>
                                             ),
                                             style: { textAlign: 'center', fontWeight: 'bold' }
@@ -167,13 +121,11 @@ function Profile() {
                                     <Typography>Email</Typography>
                                     <TextField
                                         disabled
-                                        value={'attid.1987@gmail.com'}
+                                        value={userData?.email}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <IconButton disabled>
-                                                        <EmailOutlinedIcon style={{ fontSize: '30' }} />
-                                                    </IconButton>
+                                                    <EmailOutlinedIcon style={{ fontSize: '30' }} />
                                                 </InputAdornment>
                                             ),
                                             style: { textAlign: 'center', fontWeight: 'bold' }

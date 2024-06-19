@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemAvatar from '@mui/material/ListItemAvatar';  // Make sure ListItemAvatar is also imported
 import Autocomplete from '@mui/material/Autocomplete';
-import { Box, Typography, TextField, Avatar, CircularProgress } from "@mui/material";
+import { Box, Typography, TextField, CircularProgress, IconButton, Menu, MenuItem, Avatar } from "@mui/material";  // Include Avatar in the import statement
 import Container from '@mui/material/Container';
 import { useUser } from '../components/UserContext';
 import { useNavigate } from 'react-router-dom';
@@ -12,26 +12,28 @@ import Tooltip from '@mui/material/Tooltip';
 import AppBarToolbar from '../components/AppBarToolbar';
 import Divider from '@mui/material/Divider';
 import Pagination from '@mui/material/Pagination';
-import { getDatabase, ref, get } from 'firebase/database';
+import { getDatabase, ref, update, get } from 'firebase/database';
 import '../style/course.css';
 
 // ICON
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import UpdateRoundedIcon from '@mui/icons-material/UpdateRounded'; // Replace with appropriate icon
 
 import { app } from '../api/apiconfig';
 
 function Setting() {
     const { user, logout } = useUser();
     const navigate = useNavigate();
-    const [setAnimationBox2] = useState(false);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(7);
-    const [searchName] = useState('');
-    const [searchStudentID] = useState('');
-    const [searchRole] = useState('');
+    const [searchName, setSearchName] = useState('');
+    const [searchStudentID, setSearchStudentID] = useState('');
+    const [searchRole, setSearchRole] = useState('');
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedRole, setSelectedRole] = useState('');
 
     const handleLogout = () => {
         logout();
@@ -43,35 +45,32 @@ function Setting() {
     };
 
     const handleSearchNameChange = (event) => {
-        const searchName = event.target.value.toLowerCase();
-        const filteredUsers = users.filter(user =>
-            user.firstname.toLowerCase().includes(searchName) ||
-            user.lastname.toLowerCase().includes(searchName)
-        );
-        setUsers(filteredUsers);
-        setCurrentPage(1);
+        setSearchName(event.target.value.toLowerCase());
     };
 
     const handleSearchStudentIDChange = (event) => {
-        const searchStudentID = event.target.value.toLowerCase();
-        const filteredUsers = users.filter(user =>
-            user.studentId.toLowerCase().includes(searchStudentID)
-        );
-        setUsers(filteredUsers);
-        setCurrentPage(1);
+        setSearchStudentID(event.target.value.toLowerCase());
     };
 
     const handleSearchRoleChange = (event, value) => {
-        const searchRole = value ? value.toLowerCase() : '';
-        const filteredUsers = searchRole
-            ? users.filter(user => user.role.toLowerCase() === searchRole)
-            : users;
-        setUsers(filteredUsers);
-        setCurrentPage(1);
+        setSearchRole(value ? value.toLowerCase() : '');
     };
 
     const handlePageChange = (event, value) => {
         setCurrentPage(value);
+    };
+
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleRoleSelect = (role) => {
+        setSelectedRole(role);
+        handleMenuClose();
     };
 
     useEffect(() => {
@@ -79,23 +78,20 @@ function Setting() {
             try {
                 const db = getDatabase(app);
                 const usersRef = ref(db, 'users');
-    
+
                 const snapshot = await get(usersRef);
                 if (snapshot.exists()) {
                     const usersData = snapshot.val();
                     const allUsers = Object.values(usersData);
-    
-                    const filteredUsers = searchName || searchStudentID || searchRole
-                        ? allUsers.filter(user =>
-                            (user.firstname.toLowerCase().includes(searchName) ||
-                                user.lastname.toLowerCase().includes(searchName)) &&
-                            user.studentId.toLowerCase().includes(searchStudentID) &&
-                            user.role.toLowerCase() === searchRole
-                        )
-                        : allUsers;
-    
+
+                    const filteredUsers = allUsers.filter(user =>
+                        (user.firstname.toLowerCase().includes(searchName) ||
+                            user.lastname.toLowerCase().includes(searchName)) &&
+                        user.studentId.toLowerCase().includes(searchStudentID) &&
+                        (searchRole ? user.role.toLowerCase() === searchRole : true)
+                    );
+
                     setUsers(filteredUsers);
-                    setAnimationBox2(true);
                 } else {
                     console.log('No users data available');
                 }
@@ -105,18 +101,51 @@ function Setting() {
                 setLoading(false);
             }
         };
-    
-        if (!searchName && !searchStudentID && !searchRole) {
-            setUsers([]);
-        }
-    
+
         fetchData();
     }, [searchName, searchStudentID, searchRole]);
-
 
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+    const toggleUserRole = async (userId, newRole) => {
+        try {
+            const db = getDatabase(app);
+            const usersRef = ref(db, 'users');
+
+            // ค้นหาผู้ใช้ที่ต้องการอัปเดตโดยใช้ userId ใน Firebase
+            const snapshot = await get(usersRef);
+            if (snapshot.exists()) {
+                const usersData = snapshot.val();
+                const allUsers = Object.entries(usersData);
+
+                // หาข้อมูลของผู้ใช้ที่ต้องการอัปเดตโดยใช้ userId และ studentId
+                allUsers.forEach(([key, user]) => {
+                    if (user.studentId === userId) {
+                        update(ref(db, `users/${key}`), { ...user, role: newRole });
+                    }
+                });
+
+                // อัปเดต state ใน local สำหรับการแสดงผลทันที
+                const updatedUsers = users.map(user => {
+                    if (user.id === userId) {
+                        return { ...user, role: newRole };
+                    }
+                    return user;
+                });
+                setUsers(updatedUsers);
+
+                console.log('อัปเดตบทบาทผู้ใช้สำเร็จ');
+            } else {
+                console.log('No users data available');
+            }
+        } catch (error) {
+            console.error('เกิดข้อผิดพลาดในการอัปเดตบทบาทผู้ใช้:', error);
+        }
+    };
+
+
 
     return (
         <div style={{ minHeight: '100vh', backgroundColor: '#f6f7f1', display: 'flex', flexDirection: 'column' }}>
@@ -136,7 +165,7 @@ function Setting() {
                                     height: '75vh',
                                 }}
                             >
-                                {loading && (
+                                {loading ? (
                                     <div style={{
                                         height: '50vh',
                                         width: '50vw',
@@ -148,9 +177,7 @@ function Setting() {
                                         <CircularProgress size={100} thickness={5} />
                                         <Typography style={{ marginTop: '5%' }}>Loading ... Please Wait</Typography>
                                     </div>
-                                )}
-
-                                {!loading && (
+                                ) : (
                                     <div>
                                         <div>
                                             <h2>Data Setting</h2>
@@ -183,34 +210,37 @@ function Setting() {
                                             ) : (
                                                 <List style={{ width: '50vw' }}>
                                                     {currentUsers.map((user) => (
-                                                        <ListItem button key={user.id} onClick={() => handleUserClick(user.id)}>
+                                                        <ListItem key={user.id}>
                                                             <ListItemAvatar>
-                                                                <Avatar
-                                                                    alt="Avatar"
-                                                                    src={JSON.parse(localStorage.getItem(`profileImgList`))[user.id]?.imageLink || ''}
-                                                                    sx={{ width: 40, height: 40, borderRadius: '50%' }}
-                                                                />
+                                                                <Tooltip title={`${user.role}`} arrow placement="top">
+                                                                    <Avatar
+                                                                        alt="Avatar"
+                                                                        src={(JSON.parse(localStorage.getItem('profileImgList')) || {})[user.id]?.imageLink || ''}
+                                                                        sx={{
+                                                                            width: 40,
+                                                                            height: 40,
+                                                                            borderRadius: '50%',
+                                                                            bgcolor: user.role === 'Teacher' ? '#26c742' : '#1976d2', // Green for Teacher, Blue for Student
+                                                                        }}
+                                                                    >
+                                                                        {user.role === 'Teacher' ? <ManageAccountsRoundedIcon /> : <PersonRoundedIcon />}
+                                                                    </Avatar>
+                                                                </Tooltip>
                                                             </ListItemAvatar>
                                                             <ListItemText primary={`${user.firstname} ${user.lastname}`} secondary={`ID: ${user.studentId}`} />
                                                             <Tooltip title={user.role} arrow placement="top">
-                                                                <Box
-                                                                    component={Avatar}
-                                                                    alt="Avatar"
-                                                                    sx={{
-                                                                        width: 40,
-                                                                        height: 40,
-                                                                        borderRadius: '50%',
-                                                                        bgcolor: user.role === 'Teacher' ? '#FF5733' : '#26c742',
-                                                                        color: '#FFFFFF',
-                                                                        display: 'flex',
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'center',
-                                                                    }}
-                                                                >
-                                                                    {user.role === 'Teacher' && <ManageAccountsRoundedIcon />}
-                                                                    {user.role === 'Student' && <PersonRoundedIcon />}
-                                                                </Box>
+                                                                <IconButton onClick={handleMenuOpen} color="primary">
+                                                                    <UpdateRoundedIcon />
+                                                                </IconButton>
                                                             </Tooltip>
+                                                            <Menu
+                                                                anchorEl={anchorEl}
+                                                                open={Boolean(anchorEl)}
+                                                                onClose={handleMenuClose}
+                                                            >
+                                                                <MenuItem onClick={() => { toggleUserRole(user.id, 'Student'); handleMenuClose(); }}>Student</MenuItem>
+                                                                <MenuItem onClick={() => { toggleUserRole(user.id, 'Teacher'); handleMenuClose(); }}>Teacher</MenuItem>
+                                                            </Menu>
                                                         </ListItem>
                                                     ))}
                                                 </List>

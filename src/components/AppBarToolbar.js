@@ -1,16 +1,16 @@
-//apptoolbar.js
+// apptoolbar.js
+
 import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
-import { Typography, Avatar, Dialog, DialogTitle, Button, Menu, MenuItem } from "@mui/material";
+import { Typography, Avatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { getUsersFromFirebase } from '../api/apiconfig';
 
-//ICON
+// ICONS
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import SettingsSuggestOutlinedIcon from '@mui/icons-material/SettingsSuggestOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import SportsEsportsOutlinedIcon from '@mui/icons-material/SportsEsportsOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
@@ -19,18 +19,14 @@ import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlin
 const AppBarToolbar = ({ user: propUser }) => {
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [userData, setUserData] = useState({});
+    const [userRole, setUserRole] = useState('');
 
     useEffect(() => {
-        getUsersFromFirebase()
-            .then((usersData) => {
-                console.log('Users data from Firebase:', usersData);
-                const loggedInUser = usersData[propUser?.uid];
-                setUserData(loggedInUser || {});
-            })
-            .catch((error) => {
-                console.error('Error getting users data:', error);
-            });
-    }, [propUser?.uid]);
+        // Read user data from local storage
+        const userDataFromLocalStorage = JSON.parse(localStorage.getItem('userData'));
+        setUserData(userDataFromLocalStorage || {});
+        setUserRole(userDataFromLocalStorage?.role || '');
+    }, []);
 
     const handleDrawerOpen = () => {
         setDrawerOpen(true);
@@ -54,8 +50,7 @@ const AppBarToolbar = ({ user: propUser }) => {
                         <MenuIcon />
                     </IconButton>
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                        <Typography style={{ marginRight: '8px' }}>Attid Kingkoiklang</Typography>
-                        {/* <Typography style={{ marginRight: '8px' }}>{`${userData.firstname} ${userData.lastname}`}</Typography> */}
+                        <Typography style={{ marginRight: '8px' }}>{`${userData.firstname} ${userData.lastname} [${userData.role}]`}</Typography>
                         <Avatar alt={`${userData.firstname} ${userData.lastname}`} src={userData.profileImageUrl} sx={{ width: 40, height: 40 }} />
                     </div>
                 </Toolbar>
@@ -109,20 +104,24 @@ const AppBarToolbar = ({ user: propUser }) => {
                         <ListItemText primary="Profile" />
                     </ListItem>
                     <Divider style={{ margin: '10px 0' }} />
-                    <ListItem button component="a" href="/uploadfile" style={{ display: 'flex', alignItems: 'center' }}>
-                        <ListItemIcon>
-                            <FileUploadOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Upload File" />
-                    </ListItem>
-                    <Divider style={{ margin: '10px 0' }} />
-                    <ListItem button component="a" href="/setting" style={{ display: 'flex', alignItems: 'center' }}>
-                        <ListItemIcon>
-                            <ManageAccountsOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="User Management" />
-                    </ListItem>
-                    <Divider style={{ margin: '10px 0' }} />
+                    {userRole === 'Teacher' && (
+                        <>
+                            <ListItem button component="a" href="/uploadfile" style={{ display: 'flex', alignItems: 'center' }}>
+                                <ListItemIcon>
+                                    <FileUploadOutlinedIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Upload File" />
+                            </ListItem>
+                            <Divider style={{ margin: '10px 0' }} />
+                            <ListItem button component="a" href="/setting" style={{ display: 'flex', alignItems: 'center' }}>
+                                <ListItemIcon>
+                                    <ManageAccountsOutlinedIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="User Management" />
+                            </ListItem>
+                            <Divider style={{ margin: '10px 0' }} />
+                        </>
+                    )}
                     <ListItem button component="a" href="/login" style={{ display: 'flex', alignItems: 'center' }}>
                         <ListItemIcon>
                             <LogoutOutlinedIcon />

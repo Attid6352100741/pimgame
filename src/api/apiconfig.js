@@ -1,7 +1,7 @@
 // apiconfig.js
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getDatabase, ref, push, get } from 'firebase/database';
+import { getDatabase, ref, push, get, update } from 'firebase/database';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -19,26 +19,29 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
-const getUsersFromFirebase = () => {
-  const db = getDatabase(app);
-  const usersRef = ref(db, 'users');
+const getUsersFromFirebase = async () => {
+  try {
+    const db = getDatabase(app);
+    const usersRef = ref(db, 'users');
 
-  return get(usersRef)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        const usersData = snapshot.val();
-        console.log('Users data:', usersData);
-        return usersData;
-      } else {
-        console.log('No users data available');
-        return {};
-      }
-    })
-    .catch((error) => {
-      console.error('Error getting users data from Firebase:', error);
-      return {};
-    });
+    const snapshot = await get(usersRef);
+    if (snapshot.exists()) {
+      const usersData = snapshot.val();
+      const usersList = Object.keys(usersData).map(key => ({
+        id: key,
+        ...usersData[key]
+      }));
+      return usersList;
+    } else {
+      console.log('No users data available');
+      return [];
+    }
+  } catch (error) {
+    console.error('Error getting users data from Firebase:', error);
+    throw error;
+  }
 };
+
 
 const addUserToFirebase = async (newUser) => {
   try {
@@ -61,4 +64,31 @@ const addUserToFirebase = async (newUser) => {
   }
 };
 
-export { app, addUserToFirebase, getUsersFromFirebase };
+const updateUserRoleInFirebase = async (userId, currentRole) => {
+  try {
+    const db = getDatabase(app);
+    const usersRef = ref(db, 'users');
+    
+    // Fetch user details based on userId directly from Firebase
+    const snapshot = await get(ref(usersRef, userId));
+    const userData = snapshot.val();
+
+    if (!userData) {
+      console.error(`User with ID ${userId} not found.`);
+      return;
+    }
+
+    // Determine new role
+    const newRole = currentRole === 'Teacher' ? 'Student' : 'Teacher';
+
+    // Update Firebase with new role using update function
+    await update(ref(usersRef, `${userId}`), { role: newRole });
+
+    console.log('User role updated successfully');
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    throw error;
+  }
+};
+
+export { app, getUsersFromFirebase, addUserToFirebase, updateUserRoleInFirebase };

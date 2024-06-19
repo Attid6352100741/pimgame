@@ -7,24 +7,23 @@ import { useUser } from '../components/UserContext';
 import { useNavigate } from 'react-router-dom';
 import AppBarToolbar from '../components/AppBarToolbar';
 
-//Mui
+// Mui
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 
-//Slider
+// Slider
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-//PICTURE
-import banner1 from "../img/banner1.png"
-import banner2 from "../img/banner2.png"
-import group from "../img/group.png"
-import course from "../img/course.png"
-import race from "../img/race.png"
-
+// Pictures
+import banner1 from "../img/banner1.png";
+import banner2 from "../img/banner2.png";
+import group from "../img/group.png";
+import course from "../img/course.png";
+import race from "../img/race.png";
 
 function Home() {
     const { user, logout } = useUser();
@@ -34,6 +33,7 @@ function Home() {
         logout();
         navigate('/login');
     };
+
     return (
         <div className='maincontent' style={{ width: '100vw', height: '100vh', backgroundColor: '#f6f7f1' }}>
             <AppBarToolbar user={user} onLogout={handleLogout} />
@@ -69,12 +69,18 @@ function Home() {
                                     </Typography>
                                     <Divider style={{ margin: '10px 0' }} />
                                     <Typography variant="body2" color="text.secondary">
-                                        Lizards are a widespread group of squamate reptiles, with over 6,000
-                                        species, ranging across all continents except Antarctica
+                                        ENG Group template
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button variant="contained" size="small" style={{ width: '100%', height: '4vh' }}>View</Button>
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        style={{ width: '100%', height: '4vh' }}
+                                        onClick={() => navigate('/group')}
+                                    >
+                                        View
+                                    </Button>
                                 </CardActions>
                             </Card>
                         </ListItem>
@@ -92,17 +98,23 @@ function Home() {
                                     </Typography>
                                     <Divider style={{ margin: '10px 0' }} />
                                     <Typography variant="body2" color="text.secondary">
-                                        Lizards are a widespread group of squamate reptiles, with over 6,000
-                                        species, ranging across all continents except Antarctica
+                                        ENG Course template
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button variant="contained" size="small" style={{ width: '100%', height: '4vh' }} sx={{
-                                        width: '25%', backgroundColor: '#68c957',
-                                        '&:hover': {
-                                            backgroundColor: '#4f964c',
-                                        },
-                                    }}>View</Button>
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        style={{ width: '100%', height: '4vh', backgroundColor: '#68c957' }}
+                                        sx={{
+                                            '&:hover': {
+                                                backgroundColor: '#4f964c',
+                                            },
+                                        }}
+                                        onClick={() => navigate('/course')}
+                                    >
+                                        View
+                                    </Button>
                                 </CardActions>
                             </Card>
                         </ListItem>
@@ -120,17 +132,23 @@ function Home() {
                                     </Typography>
                                     <Divider style={{ margin: '10px 0' }} />
                                     <Typography variant="body2" color="text.secondary">
-                                        Lizards are a widespread group of squamate reptiles, with over 6,000
-                                        species, ranging across all continents except Antarctica
+                                        ENG Race template
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button variant="contained" size="small" style={{ width: '100%', height: '4vh' }} sx={{
-                                        width: '25%', backgroundColor: '#e85046',
-                                        '&:hover': {
-                                            backgroundColor: '#cf3a30',
-                                        },
-                                    }}>Enter Code</Button>
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        style={{ width: '100%', height: '4vh', backgroundColor: '#e85046' }}
+                                        sx={{
+                                            '&:hover': {
+                                                backgroundColor: '#cf3a30',
+                                            },
+                                        }}
+                                        onClick={() => navigate('/racing')}
+                                    >
+                                        Enter Code
+                                    </Button>
                                 </CardActions>
                             </Card>
                         </ListItem>

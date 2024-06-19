@@ -1,13 +1,13 @@
 //login.js
+
 import React, { useState } from 'react';
 import { Button, Typography, TextField, Snackbar, Alert } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import pictureLogo from '../img/Logo.png'
-import qrcode from '../img/qrcode.png'
-import english from '../img/english.png'
-import view from '../img/view.png'
-import forgotpassword from './forgotpassword';
+import { getDatabase, ref, get } from 'firebase/database'; // เพิ่มการ import สำหรับ Firebase Realtime Database
+import pictureLogo from '../img/Logo.png';
+import qrcode from '../img/qrcode.png';
+import english from '../img/english.png';
 import { app } from '../api/apiconfig';
 
 function Login() {
@@ -48,7 +48,22 @@ function Login() {
     try {
       const auth = getAuth(app);
       const userCredential = await signInWithEmailAndPassword(auth, username, password);
-      const userData = userCredential.user;
+      const userEmail = userCredential.user.email; // อีเมลของผู้ใช้ที่ login สำเร็จ
+
+      const db = getDatabase(app); // Firebase Realtime Database instance
+      const usersRef = ref(db, 'users');
+
+      const snapshot = await get(usersRef);
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          const userData = childSnapshot.val();
+          if (userData.email === userEmail) {
+            // บันทึกข้อมูลใน local storage
+            localStorage.setItem('userData', JSON.stringify(userData));
+          }
+        });
+      }
+
       setLoginStatus('success');
       setOpenSnackbar(true);
       navigate('/home');
@@ -56,7 +71,7 @@ function Login() {
       setLoginStatus('error');
       setErrorAlert('Email or Password Incorrect');
       setTimeout(handleCloseAlert, 5000);
-      console.log('Email or Password Incorrect', error.message);
+      console.error('Email or Password Incorrect', error.message);
     }
   };
 
